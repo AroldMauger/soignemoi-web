@@ -55,6 +55,6 @@ class UsersController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        return $this->render('admin-dashboard.html.twig');
+        return $this->render('pages/admin-dashboard.html.twig');
     }
 }
