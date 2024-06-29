@@ -597,8 +597,67 @@ label {
     padding:25px;
     width: 40%;
 }
+#admin-select-doctor:hover {
+    cursor: pointer;
+}
+
+.find-doctor-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap:20px;
+}
+
+
+.fa-calendar-days {
+    background: #9CF89E;
+    font-size: 34px;
+    border-radius: 50%;
+    border: 1px solid black;
+    padding:25px;
+}
+
+.fa-calendar-days:hover {
+    background: #bdbaba;
+    cursor: pointer;
+}
+
+.find-doctor {
+    border-radius: 40px;
+    border: 2px solid #000;
+    background: #9CF89E;
+    font-size: 26px;
+    padding:25px;
+    width: 40%;
+}
+
+.no-doctor {
+    font-size: 26px;
+}
 
 .nav-admin {
     padding-bottom: 26px;
     border-bottom: solid 4px #F3F9B0;
+}
+
+
+
+.fa-magnifying-glass {
+    background: white;
+    font-size: 28px;
+    border-radius: 50%;
+    border: 1px solid black;
+    padding:25px;
+
+}
+
+.fa-magnifying-glass:hover {
+    background: #bdbaba;
+    cursor: pointer;
+}
+
+.search-button {
+    border: none;
+    background: none;
+    border-radius: 50%;
 }

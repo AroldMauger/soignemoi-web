@@ -4,33 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hôpital SoigneMoi de la région lilloise</title>
-    <link rel="stylesheet" href="app.css">
+    <link rel="stylesheet" href="{{ asset('app.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;700&family=Noto+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/70fabb1b7e.js" crossorigin="anonymous"></script>
-
 </head>
 <body class="body-dashboard">
 <header class="header-dashboard-admin">
     <div class="header-admin-subcontainer">
-        <img class="logo-dashboard" src="logo-soignemoi.png" alt="logo de l'hôpital Soignemoi">
+        <img class="logo-dashboard" src="{{ asset('logo-soignemoi.png') }}" alt="logo de l'hôpital Soignemoi">
         <h1 class="admin-main-title">Session administrateur</h1>
     </div>
 
     <nav class="nav-dashboard">
-        <a href="/add-doctor">Ajouter un médecin</a>
+        <a href="{{ path('doctor_new') }}">Ajouter un médecin</a>
         <a href="/logout">Déconnexion</a>
     </nav>
 </header>
 
 <main class="main-admin-dashboard">
     <h2 class="title-admin-dashboard">RECHERCHER UN SPÉCIALISTE</h2>
-    <div>
-        <input id="admin-select-doctor" type="text" placeholder="Entrez le nom d'un médecin">
-    </div>
+    <form class="search-form" method="get" action="{{ path('doctor_search') }}">
+        <select id="admin-select-doctor" name="speciality">
+            <option value="">Choisissez une spécialité</option>
+            {% for key, value in specialities %}
+                <option value="{{ value }}" {{ app.request.query.get('speciality') == value ? 'selected' : '' }}>
+                    {{ key }}
+                </option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="search-button">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+    </form>
+
+    <!-- Liste des médecins -->
+    {% if doctors is defined and doctors|length > 0 %}
+            {% for doctor in doctors %}
+                <div class="find-doctor-container">
+                    <p class="find-doctor">{{doctor.firstname}} {{ doctor.lastname}} - {{doctor.speciality}}</p>
+                    <i class="fa-regular fa-calendar-days"></i>
+                </div>
+
+            {% else %}
+                <p>Aucun médecin trouvé pour cette spécialité.</p>
+            {% endfor %}
+    {% elseif app.request.query.get('speciality') %}
+        <p class="no-doctor">Aucun médecin trouvé pour cette spécialité.</p>
+    {% endif %}
 </main>
-
-
 </body>
 </html>
