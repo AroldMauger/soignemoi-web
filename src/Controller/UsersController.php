@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controller;
 
 use App\Entity\Users;
@@ -12,7 +13,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UsersController extends AbstractController
 {
-    #[Route('/signup', name: "user_new", methods: ['GET', 'POST'])]
+    #[Route('/signup', name: 'user_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
         $user = new Users();
@@ -21,12 +22,16 @@ class UsersController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Hash le mot de passe de l'utilisateur
             $hashedPassword = $passwordHasher->hashPassword(
                 $user,
                 $user->getPassword()
             );
             $user->setPassword($hashedPassword);
+
+            // Assurez-vous que les rôles sont bien définis
+            if (empty($user->getRoles())) {
+                $user->setRoles(['ROLE_USER']);  // Définir les rôles par défaut si aucun n'est défini
+            }
 
             $entityManager->persist($user);
             $entityManager->flush();
@@ -39,9 +44,17 @@ class UsersController extends AbstractController
         ]);
     }
 
-    #[Route('/signup-success', name: "user_success")]
+    #[Route('/signup-success', name: 'user_success')]
     public function signupSuccess(): Response
     {
         return $this->render('pages/signup-success.html.twig');
+    }
+
+    #[Route('/admin-dashboard', name: 'admin_dashboard')]
+    public function adminDashboard(): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        return $this->render('admin-dashboard.html.twig');
     }
 }

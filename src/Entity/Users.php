@@ -30,6 +30,14 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $address = null;
 
+    #[ORM\Column(type: 'json')]
+    private array $roles = ['ROLE_USER'];  // Valeur par défaut pour les nouveaux utilisateurs
+
+    public function __construct()
+    {
+        $this->roles = ['ROLE_USER'];
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -94,14 +102,25 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-    public function eraseCredentials():void {
 
+    public function eraseCredentials(): void
+    {
     }
-    public function getUserIdentifier():string {
+
+    public function getUserIdentifier(): string
+    {
         return $this->email;
     }
-    public function getRoles():array {
-        return ["ROLE_USER"];
+
+    public function getRoles(): array
+    {
+        return $this->roles;
     }
 
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
 }

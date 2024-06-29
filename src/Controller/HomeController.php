@@ -13,6 +13,8 @@ class HomeController extends AbstractController {
     #[Route('/dashboard', name:"dashboard", methods: ['GET'])]
     public function dashboard()
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         return $this->render("pages/dashboard.html.twig");
     }
 
