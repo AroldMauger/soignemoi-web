@@ -286,7 +286,6 @@ body {
 
 #submit-signup {
     border: 1px solid #000;
-
     background: #9CF89E;
     padding: 6px 20px 6px 20px;
     font-size: 20px;
@@ -324,11 +323,21 @@ body {
     font-family: 'Noto Sans';
 }
 
+.signup-form div{
+    display: flex;
+    flex-direction: column;
+}
+
+.signup-form div input{
+   margin-bottom: 20px;
+    height: 26px;
+}
+
 label {
     font-weight: 600;
     margin-bottom: 5px;
     color: #0083BD;
-
+    font-size: 1.4rem;
 }
 
 .input-signup-form {
@@ -521,13 +530,28 @@ label {
 
 
 .confirmation-message {
-    color: #FFF;
+    color: #0083BD;
     text-align: center;
     font-family: Noto Sans;
     font-size: 38px;
     font-style: normal;
     font-weight: 700;
     margin: 50px;
+}
+
+.return-btn {
+    text-decoration: none;
+    color: white;
+    background-color: #36D2A7;
+    font-weight: 700;
+    font-size: 1.4rem;
+    padding: 1rem 2rem;
+    border-radius: 0.8rem;
+    transition: background-color 0.3s ease;
+}
+
+.return-btn:hover{
+    background-color: grey;
 }
 
 /* ADMIN_DASHBOARD.HTML */

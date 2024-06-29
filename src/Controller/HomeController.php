@@ -16,11 +16,5 @@ class HomeController extends AbstractController {
         return $this->render("pages/dashboard.html.twig");
     }
 
-    #[Route('/signup', name:"signup")]
-
-    public function signupForm()
-    {
-        return $this->render('pages/signup-form.html.twig');
-    }
 
 }
