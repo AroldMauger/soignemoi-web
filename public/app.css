@@ -556,13 +556,32 @@ label {
 
 /* ADMIN_DASHBOARD.HTML */
 
+.header-dashboard-admin {
+    display: flex;
+    flex-direction: row;
+    height: 10%;
+    padding: 5px;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #0083BD;
+    color: #fff;
+}
+
+.header-admin-subcontainer {
+    display: flex;
+    flex-direction: row;
+    gap:20px;
+    width: 60%;
+    align-items: center;
+    color: #9CF89E;
+}
 
 .main-admin-dashboard {
     margin:100px;
 }
 
 .title-admin-dashboard {
-    color: #F3F9B0;
+    color: #0083BD;
     font-family: Noto Sans;
     font-size: 50px;
     font-style: normal;

@@ -50,11 +50,5 @@ class UsersController extends AbstractController
         return $this->render('pages/signup-success.html.twig');
     }
 
-    #[Route('/admin-dashboard', name: 'admin_dashboard')]
-    public function adminDashboard(): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        return $this->render('pages/admin-dashboard.html.twig');
-    }
 }
