@@ -2,6 +2,8 @@
 body {
     background-color: #0083BD;
     margin: 0px;
+    font-family: 'Noto Sans', sans-serif;
+
 }
 
 .header_in_mainpage {
@@ -177,6 +179,7 @@ body {
 }
 
 .login-form {
+    z-index: 3;
     display: none;
     position: absolute;
     top: 50%;
@@ -205,9 +208,9 @@ body {
 }
 
 #submit-login {
-    border: none;
-    background: #000000;
-    color: #fff;
+    border: 1px solid black;
+    background: #FFA95C;
+    color: #3E4A3D;
     padding: 1rem 2rem;
     font-size: 1.6rem;
     font-weight: 700;
@@ -216,7 +219,9 @@ body {
 }
 
 #submit-login:hover {
-    background-color: #FF4500;
+    background-color: black;
+    color: white;
+
 }
 
 .closebutton_container {
@@ -266,12 +271,11 @@ body {
     justify-content: space-between;
     padding-inline: 20px;
     padding-top: 10px;
-
+    background-color: #0083BD;
 }
 
 .signup-title {
-    color: #FFF;
-
+    color: #0083BD;
     font-family: Noto Sans;
     font-size: 34px;
     font-style: normal;
@@ -323,6 +327,8 @@ body {
 label {
     font-weight: 600;
     margin-bottom: 5px;
+    color: #0083BD;
+
 }
 
 .input-signup-form {
@@ -354,14 +360,46 @@ label {
 
 /* DASHBOARD.PHP */
 
-.title-in-dashboard {
-    color: #9CF89E;
-    font-family: Noto Sans;
-    font-size: 60px;
-    font-style: normal;
+.body-dashboard {
+    background-color: #F1F1F1;
+}
+
+.header-dashboard {
+    display: flex;
+    height: 10%;
+    padding: 5px;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #0083BD;
+    color: #fff;
+}
+
+.logo-dashboard, .logo-form {
+    width: 10%;
+}
+
+.nav-dashboard {
+    display: flex;
+    gap: 4rem;
+}
+
+.nav-dashboard a,
+.return-button-form {
+    text-decoration: none;
+    text-align: center;
+    color: #fff;
     font-weight: 700;
-    line-height: 72px;
-    letter-spacing: -1.2px;
+    font-size: 1.8rem;
+    padding: 1rem 1rem;
+    border-radius: 0.8rem;
+    transition: background-color 0.3s ease;
+}
+
+
+.nav-dashboard a:hover,
+.return-button-form:hover,
+.return-billing:hover{
+    background-color: #9CF89E;
 }
 
 .logo_container {
@@ -389,11 +427,53 @@ label {
     color: #3E4A3D;
 }
 
+.in-progress-container {
+    background-color: #36D2A7;
+}
+
+.in-progress-container p, .futur-stay-container p {
+    color:white;
+}
+
+.futur-stay-container {
+    background-color: #0083BD;
+}
+
+.card-container {
+    display: inline-flex;
+    flex-direction: row;
+    gap: 3rem;
+    padding: 20px;
+    border-radius: 22px;
+    width: auto;
+}
+
+.card-subcontainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.date-in-card, .doctor-in-card {
+    margin-block: 10px;
+    color: #8A9EA0;
+}
+
+.doctor-in-card {
+    font-weight: lighter;
+}
+
+.in-progress-card {
+    border : 2px solid #36D2A7;
+}
+
+.futur-stay-card {
+    border : 2px solid #0083BD;
+}
+
 .endedstay_title_container {
     margin-top: 40px;
     margin-bottom: 40px;
     border-radius: 22px;
-    background-color: #9CF89E;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -410,55 +490,8 @@ label {
     padding: 20px;
 }
 
-.endedstay_title_container i {
-    padding-right: 20px;
-    font-size: 40px;
-}
 
-.endedstay_card {
-    display: flex;
-    flex-direction: column;
-    border: solid 4px #FFA95C;
-    width: 20%;
-}
 
-.doctorinfo_card {
-    background-color: #FFA95C;
-    color:#3E4A3D;
-    text-align: center;
-    padding:10px;
-}
-
-.doctorinfo_card p {
-    margin: 0px;
-}
-
-.purpose_card {
-    background-color: #F5F5F5;
-    color:#475460;
-    padding: 15px;
-    text-align: center;
-    margin-top: 0px;
-    margin-bottom: 5px;
-}
-
-.date_card {
-    background-color: #0083BD;
-    color: #FFFFFF;
-    text-align: center;
-    margin:0px;
-    padding:10px;
-}
-
-.nostay-message {
-    color: #FFF;
-    font-family: Noto Sans;
-    font-size: 28px;
-    font-style: normal;
-    font-weight: 700;
-    letter-spacing: 3.2px;
-    margin:0px;
-}
 
 /* ADD_A_STAY_FORM.HTML */
 

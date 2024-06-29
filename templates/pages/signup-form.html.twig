@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hôpital SoigneMoi de la région lilloise</title>
+    <link rel="stylesheet" href="app.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;700&family=Noto+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="body-dashboard">
+<nav class="nav-bar-signup-page">
+    <img class="logo_main" src="logo-soignemoi.png" alt="logo de l'hôpital SoigneMoi">
+    <a href="/" class="returntomain-button">Retour à l'accueil</a>
+</nav>
+
+<main class="main-signup">
+    <h2 class="signup-title">CRÉEZ VOTRE COMPTE</h2>
+    <form class="signup-form" method="post" accept-charset="UTF-8">
+        <label for="name">Prénom</label>
+        <input class="input-signup-form" type="text" id="name" name="prenom" minlength="2" required>
+
+        <label for="surname">Nom</label>
+        <input class="input-signup-form" type="text" id="surname" name="nom" minlength="2"  required>
+
+        <label for="adress">Adresse postale</label>
+        <input class="input-signup-form" type="text" id="adress" name="adresse" required>
+
+        <label for="email">Email</label>
+        <input class="input-signup-form" type="email" id="email" name="email" pattern="[a-z0-9.-_]+@[a-z0-9.-_]+\.[a-z]{2,4}" required>
+
+        <label for="password">Mot de passe</label>
+        <input class="input-signup-form" type="password" id="password" name="motdepasse" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=!])(?!.*\s).{8,}$" required title="Le mot de passe doit contenir au moins une minuscule, une majuscule, un chiffre, un caractère spécial, et doit avoir au moins 8 caractères.">
+
+        <a class="button-signup_container">
+            <button type="submit" id="submit-signup">CRÉER</button>
+        </a>
+    </form>
+
+</main>
+</body>
+</html>
+

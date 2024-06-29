@@ -11,63 +11,49 @@
     <script src="https://kit.fontawesome.com/70fabb1b7e.js" crossorigin="anonymous"></script>
 
 </head>
-<body>
-<nav class="nav-bar-signup-page">
-    <div class="logo_container">
-        <img class="logo_main" src="/front-end/assets/logo-soignemoi.png" alt="logo de l'hôpital SoigneMoi">
-        <span class="title-in-dashboard">Historique des séjours</span>
-    </div>
-    <div class="navbar-container">
-        <a href="" class="button-top-dashboard">Ajouter un séjour</a>
-        <a href="/index.html" class="button-top-dashboard">Déconnexion</a>
-    </div>
-</nav>
+<body class="body-dashboard">
+<header class="header-dashboard">
+    <img class="logo-dashboard" src="logo-soignemoi.png" alt="logo de l'hôpital Soignemoi">
+    <nav class="nav-dashboard">
+        <a href="/new_appointment">Séjour</a>
+        <a href="/history">Historique</a>
+        <a href="/logout">Déconnexion</a>
+    </nav>
+</header>
 
 <section class="endedstay_title">
-    <div class="endedstay_title_container">
-        <p class="endedstay_title">Séjours terminés</p>
-        <i class="fa-solid fa-chevron-down"></i>
+    <div class="endedstay_title_container in-progress-container">
+        <p class="endedstay_title">RENDEZ-VOUS EN COURS</p>
     </div>
-    <div class="endedstay_cards_container">
-        <div class="endedstay_card">
-            <p class="date_card">16/01/2024 à 13h00</p>
-            <p class="purpose_card">Consultation obstétrique</p>
-            <div class="doctorinfo_card">
-                <p>Mme Carpentier</p>
-                <p>Sage femme</p>
-            </div>
+    <div class="card-container in-progress-card">
+        <div class="card-subcontainer">
+            <p class="date-in-card">Entrée : 16h00 (26/06/2024)</p>
+            <p class="date-in-card">Sortie : 10h00 (27/06/2024)</p>
+        </div>
+        <div class="card-subcontainer">
+            <p class="date-in-card">Échographie du 1er trimestre</p>
+            <p class="doctor-in-card">Docteur Hébert, Gynécologue</p>
+        </div>
+    </div>
 
+</section>
+
+<section class="endedstay_title">
+    <div class="endedstay_title_container futur-stay-container">
+        <p class="endedstay_title">RENDEZ-VOUS À VENIR</p>
+    </div>
+    <div class="card-container futur-stay-card">
+        <div class="card-subcontainer">
+            <p class="date-in-card">Entrée : 16h00 (26/06/2024)</p>
+            <p class="date-in-card">Sortie : 10h00 (27/06/2024)</p>
+        </div>
+        <div class="card-subcontainer">
+            <p class="date-in-card">Échographie du 1er trimestre</p>
+            <p class="doctor-in-card">Docteur Hébert, Gynécologue</p>
         </div>
     </div>
 </section>
 
-<section class="endedstay_title">
-    <div class="endedstay_title_container">
-        <p class="endedstay_title">Séjour en cours</p>
-        <i class="fa-solid fa-chevron-down"></i>
-    </div>
-    <div class="endedstay_cards_container">
-        <p class="nostay-message">Pas de séjour en cours pour le moment</p>
-    </div>
-</section>
-
-<section class="endedstay_title">
-    <div class="endedstay_title_container">
-        <p class="endedstay_title">Séjours à venir</p>
-        <i class="fa-solid fa-chevron-down"></i>
-    </div>
-    <div class="endedstay_cards_container">
-        <div class="endedstay_card">
-            <p class="date_card">24/02/2024 à 16h00</p>
-            <p class="purpose_card">Echographie du 1er trimestre</p>
-            <div class="doctorinfo_card">
-                <p>Mme Hébert</p>
-                <p>Gynécologue</p>
-            </div>
-
-        </div>
-    </div>
-</section>
 
 </body>
 </html>
