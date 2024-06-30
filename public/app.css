@@ -596,9 +596,11 @@ label {
     font-size: 26px;
     padding:25px;
     width: 40%;
+    appearance: none;
 }
 #admin-select-doctor:hover {
     cursor: pointer;
+    background: #bdbaba;
 }
 
 .find-doctor-container {
