@@ -25,8 +25,8 @@ class Slot
     #[ORM\Column(type: Types::TIME_MUTABLE)]
     private ?\DateTimeInterface $endtime = null;
 
-    #[ORM\Column]
-    private ?bool $isbooked = null;
+    #[ORM\Column(type: Types::BOOLEAN)] // Spécifiez le type BOOLEAN pour isbooked
+    private bool $isbooked = false; // Valeur par défaut à false
 
     /**
      * @var Collection<int, Appointment>
@@ -80,12 +80,12 @@ class Slot
         return $this;
     }
 
-    public function isbooked(): ?bool
+    public function isbooked(): bool
     {
         return $this->isbooked;
     }
 
-    public function setBooked(bool $isbooked): static
+    public function setIsbooked(bool $isbooked): static
     {
         $this->isbooked = $isbooked;
 

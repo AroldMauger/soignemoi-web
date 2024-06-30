@@ -3,9 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Doctors;
+use App\Entity\Planning;
+use App\Entity\Slot;
 use App\Form\DoctorsType;
+use App\Form\PlanningType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -109,5 +113,58 @@ class AdminController extends AbstractController
             'Pneumologue' => 'pneumologue',
             'Psychiatre' => 'psychiatre',
         ];
+    }
+
+    #[Route('/admin/save-planning', name: 'admin_save_planning', methods: ['POST'])]
+    public function savePlanning(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $data = $request->request->all();
+        $doctorId = $data['doctorId'];
+        $date = $data['date'];
+        $slotsData = json_decode($data['slotsData'], true);
+
+        $doctor = $entityManager->getRepository(Doctors::class)->find($doctorId);
+        $planning = new Planning();
+        $planning->setDoctor($doctor);
+        $planning->setDate(new \DateTime($date));
+
+        $entityManager->persist($planning);
+
+        foreach ($slotsData as $slotData) {
+            $slot = new Slot();
+            $slot->setStarttime(new \DateTime($slotData['starttime']));
+            $slot->setEndtime(new \DateTime($slotData['endtime']));
+            $slot->setPlanning($planning);
+            $slot->setIsbooked(false);  // Assurez-vous que isbooked est à false par défaut
+            $entityManager->persist($slot);
+        }
+
+        $entityManager->flush();
+
+        return $this->redirectToRoute('planning_success');
+    }
+
+    #[Route('/planning-success', name: 'planning_success')]
+    public function planningSuccess(): Response
+    {
+        return $this->render('pages/planning-success.html.twig');
+    }
+
+    #[Route('/admin/planning', name: 'admin_planning')]
+    public function showPlanning(Request $request): Response
+    {
+        $form = $this->createForm(PlanningType::class);
+
+        // Pass your form and any other required data
+        return $this->render('pages/admin-dashboard.html.twig', [
+            'form' => $form->createView(),
+            'specialities' => $this->getSpecialities(),
+            'doctors' => $this->getDoctors(),
+        ]);
+    }
+
+    private function getDoctors() {
+        // Replace with your actual method for retrieving doctors
+        return $this->getDoctors()->getRepository(Doctors::class)->findAll();
     }
 }

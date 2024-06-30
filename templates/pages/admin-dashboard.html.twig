@@ -41,18 +41,56 @@
 
     <!-- Liste des médecins -->
     {% if doctors is defined and doctors|length > 0 %}
-            {% for doctor in doctors %}
-                <div class="find-doctor-container">
-                    <p class="find-doctor">{{doctor.firstname}} {{ doctor.lastname}} - {{doctor.speciality}}</p>
+        {% for doctor in doctors %}
+            <div class="find-doctor-container">
+                <p class="find-doctor">{{ doctor.firstname }} {{ doctor.lastname }} - {{ doctor.speciality }}</p>
+                <button class="schedule-button" data-doctor-id="{{ doctor.id }}" data-doctor-name="{{ doctor.firstname }} {{ doctor.lastname }}">
                     <i class="fa-regular fa-calendar-days"></i>
-                </div>
-
-            {% else %}
-                <p>Aucun médecin trouvé pour cette spécialité.</p>
-            {% endfor %}
+                </button>
+            </div>
+        {% else %}
+            <p>Aucun médecin trouvé pour cette spécialité.</p>
+        {% endfor %}
     {% elseif app.request.query.get('speciality') %}
         <p class="no-doctor">Aucun médecin trouvé pour cette spécialité.</p>
     {% endif %}
 </main>
+
+<!-- Modal HTML -->
+<div id="schedulingModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Planning pour la journée du <input type="date" id="planningDate" value="2024-06-26" required></h2>
+        <div id="timeSlots">
+            <div class="time-slot">
+                <label>Début: <input type="time" class="start-time" value="10:00" required></label>
+                <label>Fin: <input type="time" class="end-time" value="11:00" required></label>
+                <button class="delete-slot">Supprimer</button>
+            </div>
+        </div>
+        <button id="addSlot">Ajouter un créneau</button>
+        <button id="savePlanning">Créer emploi du temps</button>
+    </div>
+</div>
+
+<!-- Boîte de dialogue pour les erreurs -->
+<div id="errorDialog" class="error-dialog">
+    <div class="error-dialog-content">
+        <span class="close-error-dialog">&times;</span>
+        <h2 id="errorTitle">Erreur</h2>
+        <p id="errorMessage"></p>
+        <button id="errorOkButton">OK</button>
+    </div>
+</div>
+
+<!-- Formulaire pour sauvegarder le planning -->
+<form action="{{ path('admin_save_planning') }}" method="post" id="planningForm">
+    <input type="hidden" name="doctorId" id="doctorId">
+    <input type="hidden" name="date" id="planningDateHidden">
+    <input type="hidden" name="slotsData" id="slotsData">
+</form>
+
+<script src="{{ asset('admin-modal.js') }}"></script>
+
 </body>
 </html>
