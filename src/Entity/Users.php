@@ -35,16 +35,11 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'json')]
     private array $roles = ['ROLE_USER'];
 
-    /**
-     * @var Collection<int, Appointment>
-     */
-    #[ORM\OneToMany(targetEntity: Appointment::class, mappedBy: 'user')]
-    private Collection $appointments;  // Valeur par défaut pour les nouveaux utilisateurs
+
 
     public function __construct()
     {
         $this->roles = ['ROLE_USER'];
-        $this->appointments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -133,33 +128,4 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Appointment>
-     */
-    public function getAppointments(): Collection
-    {
-        return $this->appointments;
-    }
-
-    public function addAppointment(Appointment $appointment): static
-    {
-        if (!$this->appointments->contains($appointment)) {
-            $this->appointments->add($appointment);
-            $appointment->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAppointment(Appointment $appointment): static
-    {
-        if ($this->appointments->removeElement($appointment)) {
-            // set the owning side to null (unless already changed)
-            if ($appointment->getUser() === $this) {
-                $appointment->setUser(null);
-            }
-        }
-
-        return $this;
-    }
 }

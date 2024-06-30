@@ -28,16 +28,8 @@ class Slot
     #[ORM\Column(type: Types::BOOLEAN)] // Spécifiez le type BOOLEAN pour isbooked
     private bool $isbooked = false; // Valeur par défaut à false
 
-    /**
-     * @var Collection<int, Appointment>
-     */
-    #[ORM\OneToMany(targetEntity: Appointment::class, mappedBy: 'slot')]
-    private Collection $appointments;
 
-    public function __construct()
-    {
-        $this->appointments = new ArrayCollection();
-    }
+
 
     public function getId(): ?int
     {

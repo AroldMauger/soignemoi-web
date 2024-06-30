@@ -9,7 +9,6 @@ use App\Form\DoctorsType;
 use App\Form\PlanningType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -74,23 +73,6 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/doctor-appointments/{id}', name: 'doctor_appointments', methods: ['GET'])]
-    public function doctorAppointments(int $id, EntityManagerInterface $entityManager): Response
-    {
-        $doctor = $entityManager->getRepository(Doctors::class)->find($id);
-
-        if (!$doctor) {
-            throw $this->createNotFoundException('Médecin non trouvé');
-        }
-
-        // Implémentez ici la logique pour afficher les rendez-vous du médecin
-        $appointments = []; // Remplacez ceci par votre logique de récupération des rendez-vous
-
-        return $this->render('pages/doctor-appointments.html.twig', [
-            'doctor' => $doctor,
-            'appointments' => $appointments,
-        ]);
-    }
 
     private function getSpecialities(): array
     {
