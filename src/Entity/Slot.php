@@ -26,7 +26,18 @@ class Slot
     private ?\DateTimeInterface $endtime = null;
 
     #[ORM\Column(type: Types::BOOLEAN)] // Spécifiez le type BOOLEAN pour isbooked
-    private bool $isbooked = false; // Valeur par défaut à false
+    private bool $isbooked = false;
+
+    /**
+     * @var Collection<int, Stays>
+     */
+    #[ORM\OneToMany(targetEntity: Stays::class, mappedBy: 'slot')]
+    private Collection $stays;
+
+    public function __construct()
+    {
+        $this->stays = new ArrayCollection();
+    } // Valeur par défaut à false
 
 
 
@@ -108,6 +119,36 @@ class Slot
             // set the owning side to null (unless already changed)
             if ($appointment->getSlot() === $this) {
                 $appointment->setSlot(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Stays>
+     */
+    public function getStays(): Collection
+    {
+        return $this->stays;
+    }
+
+    public function addStay(Stays $stay): static
+    {
+        if (!$this->stays->contains($stay)) {
+            $this->stays->add($stay);
+            $stay->setSlot($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStay(Stays $stay): static
+    {
+        if ($this->stays->removeElement($stay)) {
+            // set the owning side to null (unless already changed)
+            if ($stay->getSlot() === $this) {
+                $stay->setSlot(null);
             }
         }
 

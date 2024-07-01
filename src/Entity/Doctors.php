@@ -33,9 +33,16 @@ class Doctors
     #[ORM\OneToMany(targetEntity: Planning::class, mappedBy: 'doctor')]
     private Collection $plannings;
 
+    /**
+     * @var Collection<int, Stays>
+     */
+    #[ORM\OneToMany(targetEntity: Stays::class, mappedBy: 'doctor')]
+    private Collection $stays;
+
     public function __construct()
     {
         $this->plannings = new ArrayCollection();
+        $this->stays = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -115,6 +122,36 @@ class Doctors
             // set the owning side to null (unless already changed)
             if ($planning->getDoctor() === $this) {
                 $planning->setDoctor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Stays>
+     */
+    public function getStays(): Collection
+    {
+        return $this->stays;
+    }
+
+    public function addStay(Stays $stay): static
+    {
+        if (!$this->stays->contains($stay)) {
+            $this->stays->add($stay);
+            $stay->setDoctor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStay(Stays $stay): static
+    {
+        if ($this->stays->removeElement($stay)) {
+            // set the owning side to null (unless already changed)
+            if ($stay->getDoctor() === $this) {
+                $stay->setDoctor(null);
             }
         }
 

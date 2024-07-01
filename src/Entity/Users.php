@@ -35,11 +35,18 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'json')]
     private array $roles = ['ROLE_USER'];
 
+    /**
+     * @var Collection<int, Stays>
+     */
+    #[ORM\OneToMany(targetEntity: Stays::class, mappedBy: 'user')]
+    private Collection $stays;
+
 
 
     public function __construct()
     {
         $this->roles = ['ROLE_USER'];
+        $this->stays = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -124,6 +131,36 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Stays>
+     */
+    public function getStays(): Collection
+    {
+        return $this->stays;
+    }
+
+    public function addStay(Stays $stay): static
+    {
+        if (!$this->stays->contains($stay)) {
+            $this->stays->add($stay);
+            $stay->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStay(Stays $stay): static
+    {
+        if ($this->stays->removeElement($stay)) {
+            // set the owning side to null (unless already changed)
+            if ($stay->getUser() === $this) {
+                $stay->setUser(null);
+            }
+        }
 
         return $this;
     }

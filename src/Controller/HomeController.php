@@ -18,5 +18,9 @@ class HomeController extends AbstractController {
         return $this->render("pages/dashboard.html.twig");
     }
 
-
+    #[Route('/add-stay', name:"add-stay", methods: ['GET'])]
+    public function addstay()
+    {
+        return $this->render("pages/add-stay.html.twig");
+    }
 }
