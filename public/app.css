@@ -784,3 +784,160 @@ label {
 .error-dialog #errorOkButton:hover {
     background-color: #31b0d5;
 }
+
+
+/* ADD-STAY */
+/* Ajoutez ce CSS dans votre fichier app.css ou un autre fichier de style */
+
+.availability-container {
+    margin-top: 20px;
+}
+
+.day-container {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.day-container h3 {
+    margin-top: 0;
+}
+
+.slot {
+    background-color: #f0f0f0;
+    padding: 5px;
+    margin: 5px 0;
+    border-radius: 4px;
+}
+
+/* TEST */
+/* app.css */
+
+/* Style général du corps */
+.body-add-stay {
+    font-family: 'Manrope', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+}
+
+
+
+/* Style des groupes de formulaire */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+/* Style des labels */
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+
+.speciality-container select, .reason-container select, .doctor-container select {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+.speciality-container, .doctor-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.reason-container {
+    margin-bottom: 25px;
+}
+
+/* Style des inputs */
+.form-input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+.form-input:focus {
+    border-color: #007bff;
+    background-color: #fff;
+    outline: none;
+}
+
+/* Style des boutons */
+.search-button, .view-availability-button, #book-appointment {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+.search-button:hover, .view-availability-button:hover, #book-appointment:hover {
+    background-color: #0056b3;
+}
+
+/* Style des boutons de radio */
+.extend-stay-container label {
+    margin-right: 1rem;
+    font-weight: 500;
+    color: #555;
+}
+
+/* Style des créneaux de disponibilité */
+.availability-container {
+    margin-top: 1.5rem;
+}
+
+.day-container {
+    margin-bottom: 1rem;
+}
+
+.day-container h3 {
+    background-color: #e9ecef;
+    padding: 0.5rem;
+    border-radius: 4px;
+    color: #007bff;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Style des créneaux horaires */
+.slot {
+    background-color: #f8f9fa;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+/* Style du conteneur de spécialité et du médecin */
+.speciality-container, .doctor-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Container des créneaux horaires */
+.availability-container {
+    margin-top: 1.5rem;
+}

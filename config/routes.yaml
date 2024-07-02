@@ -7,3 +7,8 @@ admin_save_planning:
     path: /admin/save-planning
     controller: App\Controller\AdminController::savePlanning
     methods: [POST]
+# config/routes.yaml
+get_availability:
+    path: /get-availability
+    controller: App\Controller\StaysController::getAvailability
+    methods: POST

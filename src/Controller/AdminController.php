@@ -7,6 +7,7 @@ use App\Entity\Planning;
 use App\Entity\Slot;
 use App\Form\DoctorsType;
 use App\Form\PlanningType;
+use App\Service\SpecialityService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,12 +16,19 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AdminController extends AbstractController
 {
+    private $specialityService;
+
+    public function __construct(SpecialityService $specialityService)
+    {
+        $this->specialityService = $specialityService;
+    }
+
     #[Route('/admin-dashboard', name: 'admin_dashboard')]
     public function adminDashboard(): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $specialities = $this->getSpecialities();
+        $specialities = $this->specialityService->getSpecialities();
         ksort($specialities); // Tri des spécialités par ordre alphabétique
 
         return $this->render('pages/admin-dashboard.html.twig', [
@@ -58,7 +66,7 @@ class AdminController extends AbstractController
     public function search(Request $request, EntityManagerInterface $entityManager): Response
     {
         $speciality = $request->query->get('speciality');
-        $specialities = $this->getSpecialities();
+        $specialities = $this->specialityService->getSpecialities();
         ksort($specialities); // Tri des spécialités par ordre alphabétique
 
         $doctors = [];
@@ -71,30 +79,6 @@ class AdminController extends AbstractController
             'doctors' => $doctors,
             'specialities' => $specialities,
         ]);
-    }
-
-
-    private function getSpecialities(): array
-    {
-        return [
-            'Médecin Généraliste' => 'medecin_generaliste',
-            'Chirurgien' => 'chirurgien',
-            'Gynécologue' => 'gynecologue',
-            'Cardiologue' => 'cardiologue',
-            'Pédiatre' => 'pediatre',
-            'Dermatologue' => 'dermatologue',
-            'Neurologue' => 'neurologue',
-            'Orthopédiste' => 'orthopediste',
-            'Endocrinologue' => 'endocrinologue',
-            'Rhumatologue' => 'rhumatologue',
-            'Oncologue' => 'oncologue',
-            'Urologue' => 'urologue',
-            'Ophtalmologiste' => 'ophtalmologiste',
-            'Anesthésiste' => 'anesthesiste',
-            'Gastro-entérologue' => 'gastro_enterologue',
-            'Pneumologue' => 'pneumologue',
-            'Psychiatre' => 'psychiatre',
-        ];
     }
 
     #[Route('/admin/save-planning', name: 'admin_save_planning', methods: ['POST'])]
@@ -140,13 +124,14 @@ class AdminController extends AbstractController
         // Pass your form and any other required data
         return $this->render('pages/admin-dashboard.html.twig', [
             'form' => $form->createView(),
-            'specialities' => $this->getSpecialities(),
+            'specialities' => $this->specialityService->getSpecialities(),
             'doctors' => $this->getDoctors(),
         ]);
     }
 
     private function getDoctors() {
         // Replace with your actual method for retrieving doctors
-        return $this->getDoctors()->getRepository(Doctors::class)->findAll();
+        return $this->getDoctrine()->getRepository(Doctors::class)->findAll();
     }
 }
+

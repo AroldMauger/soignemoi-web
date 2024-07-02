@@ -6,9 +6,6 @@ use App\Entity\Slot;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<Slot>
- */
 class SlotRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -16,28 +13,18 @@ class SlotRepository extends ServiceEntityRepository
         parent::__construct($registry, Slot::class);
     }
 
-//    /**
-//     * @return Slot[] Returns an array of Slot objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('s.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function findAvailableSlots(int $doctorId, \DateTimeInterface $date): array
+    {
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.planning', 'p')  // Joindre Planning pour obtenir des slots spécifiques
+            ->where('s.isbooked = :isBooked')
+            ->andWhere('p.doctor = :doctorId')
+            ->andWhere('p.date = :date')  // Filtrer les slots pour la date du planning
+            ->setParameter('isBooked', false)
+            ->setParameter('doctorId', $doctorId)
+            ->setParameter('date', $date->format('Y-m-d'))  // Assurez-vous d'envoyer uniquement la date
+            ->getQuery()
+            ->getResult();
+    }
 
-//    public function findOneBySomeField($value): ?Slot
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }

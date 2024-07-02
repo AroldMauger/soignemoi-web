@@ -25,7 +25,7 @@ class Slot
     #[ORM\Column(type: Types::TIME_MUTABLE)]
     private ?\DateTimeInterface $endtime = null;
 
-    #[ORM\Column(type: Types::BOOLEAN)] // Spécifiez le type BOOLEAN pour isbooked
+    #[ORM\Column(type: Types::BOOLEAN)]
     private bool $isbooked = false;
 
     /**
@@ -37,10 +37,7 @@ class Slot
     public function __construct()
     {
         $this->stays = new ArrayCollection();
-    } // Valeur par défaut à false
-
-
-
+    }
 
     public function getId(): ?int
     {
@@ -83,44 +80,14 @@ class Slot
         return $this;
     }
 
-    public function isbooked(): bool
+    public function isBooked(): bool  // Méthode renommée pour correspondre à la convention de nommage
     {
         return $this->isbooked;
     }
 
-    public function setIsbooked(bool $isbooked): static
+    public function setIsBooked(bool $isbooked): static  // Méthode renommée pour correspondre à la convention de nommage
     {
         $this->isbooked = $isbooked;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Appointment>
-     */
-    public function getAppointments(): Collection
-    {
-        return $this->appointments;
-    }
-
-    public function addAppointment(Appointment $appointment): static
-    {
-        if (!$this->appointments->contains($appointment)) {
-            $this->appointments->add($appointment);
-            $appointment->setSlot($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAppointment(Appointment $appointment): static
-    {
-        if ($this->appointments->removeElement($appointment)) {
-            // set the owning side to null (unless already changed)
-            if ($appointment->getSlot() === $this) {
-                $appointment->setSlot(null);
-            }
-        }
 
         return $this;
     }
@@ -153,5 +120,9 @@ class Slot
         }
 
         return $this;
+    }
+    public function getFormattedTime(): string
+    {
+        return $this->starttime->format('H:i') . ' - ' . $this->endtime->format('H:i');
     }
 }

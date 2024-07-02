@@ -157,4 +157,26 @@ class Doctors
 
         return $this;
     }
+    /**
+     * @return Collection<int, Slot>
+     */
+    public function getAvailableSlots(): Collection
+    {
+        $slots = new ArrayCollection();
+
+        foreach ($this->getPlannings() as $planning) {
+            foreach ($planning->getSlots() as $slot) {
+                if (!$slot->isbooked()) {
+                    $slots->add($slot);
+                }
+            }
+        }
+
+        return $slots;
+    }
+
+    public function getFullname(): string
+    {
+        return $this->firstname . ' ' . $this->lastname;
+    }
 }

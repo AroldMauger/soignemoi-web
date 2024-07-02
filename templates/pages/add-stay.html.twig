@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prendre un Séjour - Hôpital SoigneMoi</title>
+    <link rel="stylesheet" href="{{ asset('app.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;700&family=Noto+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="body-add-stay">
+<header class="header-dashboard">
+    <img class="logo-dashboard" src="logo-soignemoi.png" alt="logo de l'hôpital Soignemoi">
+    <nav class="nav-dashboard">
+        <a href="/dashboard">RETOUR</a>
+    </nav>
+</header>
+<main>
+    <h1>Réserver un séjour à l'hôpital</h1>
+
+    <form action="{{ path('add-stay') }}" method="POST">
+    {{ form_start(form) }}
+
+        <input type="hidden" name="stays[user]" value="{{ app.user.id }}">
+        <input type="hidden" name="stays[status]" value="en cours">
+
+        <div class="form-group">
+        {{ form_row(form.entrydate, {'attr': {'class': 'entrydate-input'}}) }}
+    </div>
+    <div class="form-group">
+        <div class="speciality-container">
+            {{ form_row(form.speciality, {'attr': {'id': 'form_speciality', 'class': 'speciality-selector'}}) }}
+            <button type="button" id="search-speciality" class="search-button">Rechercher</button>
+        </div>
+    </div>
+
+    <div class="reason-container">
+        {{ form_row(form.reason, {'attr': {'id': 'form_reason', 'class': 'reason-selector'}}) }}
+    </div>
+    <div class="form-group">
+        <div class="doctor-container">
+            {{ form_row(form.doctor, {'attr': {'id': 'form_doctor', 'class': 'doctor-selector'}}) }}
+            <button type="button" id="view-availability" class="view-availability-button">Voir disponibilités</button>
+        </div>
+    </div>
+
+    <!-- Ajouter ce conteneur pour le code JavaScript -->
+    <div id="availability-container" style="display: none;">
+        <p>Disponibilités :</p>
+        {{ form_row(form.slot, {'attr': {'class': 'form_slot', 'name': 'slot'}}) }}
+    </div>
+
+    <div id="extend-stay-container" class="form-group">
+        <p>Souhaitez-vous prolonger votre séjour à l'hôpital ?</p>
+        <input type="radio" id="extend-yes" name="extend" value="yes"> Oui
+        <input type="radio" id="extend-no" name="extend" value="no" checked> Non
+    </div>
+
+    <div id="leaving-date-group" class="form-group" style="display: none;">
+        {{ form_row(form.leavingdate) }}
+    </div>
+
+    <button type="submit" id="book-appointment">Prendre un Séjour</button>
+
+    {{ form_end(form) }}
+    </form>
+</main>
+
+<script src="{{ asset('add-stay.js') }}"></script>
+
+</body>
+</html>
