@@ -25,6 +25,7 @@
 
             <input type="hidden" name="stays[user]" value="{{ app.user.id }}">
             <input type="hidden" name="stays[status]" value="en cours">
+            <input type="hidden" name="stays[_token]" value="{{ csrf_token('add-stay') }}">
 
             <div class="form-group input-in-add-stay-column">
                 {{ form_row(form.entrydate, {'attr': {'class': 'entrydate-input'}}) }}

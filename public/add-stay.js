@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     searchButton.addEventListener('click', function () {
         const speciality = specialitySelector.value;
+        console.log(specialitySelector)
         if (speciality) {
             fetch(`/stay-search?speciality=${speciality}`)
                 .then(response => response.json())
@@ -37,12 +38,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     console.log('Data from search:', data);
 
                     reasonSelector.innerHTML = '';
-                    Object.keys(data.reasons).forEach(key => {
-                        const option = document.createElement('option');
-                        option.value = data.reasons[key];
-                        option.textContent = key;
-                        reasonSelector.appendChild(option);
-                    });
+                    data.reasons.forEach(reason => {
+                        const template = `
+                            <option value="${reason.id}">${reason.name}</option>
+                        `
+                        reasonSelector.innerHTML += template
+                    })
 
                     doctorSelector.innerHTML = '<option value="">Choisissez un médecin</option>';
                     data.doctors.forEach(doctor => {

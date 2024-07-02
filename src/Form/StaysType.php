@@ -1,6 +1,8 @@
 <?php
 namespace App\Form;
 
+use App\Entity\Reasons;
+use App\Entity\Specialities;
 use App\Entity\Stays;
 use App\Entity\Doctors;
 use App\Entity\Slot;
@@ -20,6 +22,11 @@ class StaysType extends AbstractType
         $reasons = $options['reasons'];
         $doctors = $options['doctors'];
 
+        $specs = [];
+        foreach ($specialities as $speciality) {
+            $specs[$speciality->getName()] = $speciality->getId();
+        }
+
         $builder
             ->add('entrydate', DateTimeType::class, [
                 'widget' => 'single_text',
@@ -35,13 +42,14 @@ class StaysType extends AbstractType
 
             ])
             ->add('speciality', ChoiceType::class, [
-                'choices' => array_flip($specialities),
                 'label' => 'Spécialité nécessaire',
+                'choices' => $specs,
                 'attr' => ['class' => 'speciality-selector'],
             ])
             ->add('reason', ChoiceType::class, [
-                'choices' => array_flip($reasons),
+                'choices' => $reasons,
                 'label' => 'Motif du séjour',
+                'choice_label' => fn(Reasons $reason) => $reason->getName(),
                 'attr' => ['class' => 'reason-selector'],
             ])
             ->add('doctor', EntityType::class, [

@@ -3,10 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Doctors;
-use App\Entity\Slot;
 use App\Entity\Stays;
 use App\Form\StaysType;
+use App\Repository\DoctorsRepository;
 use App\Repository\SlotRepository;
+use App\Repository\SpecialitiesRepository;
 use App\Service\SpecialityService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,10 +26,10 @@ class StaysController extends AbstractController
     }
 
     #[Route('/add-stay', name: 'add-stay', methods: ['GET', 'POST'])]
-    public function newStay(Request $request, EntityManagerInterface $entityManager): Response
+    public function newStay(Request $request, EntityManagerInterface $entityManager, SpecialitiesRepository $specialitiesRepository): Response
     {
         $stay = new Stays();
-        $specialities = $this->specialityService->getSpecialities();
+        $specialities = $specialitiesRepository->findAll();
         ksort($specialities); // Tri des spécialités par ordre alphabétique
 
         // Récupérer la spécialité depuis la requête GET
@@ -64,7 +65,6 @@ class StaysController extends AbstractController
 
             $entityManager->persist($data);
             $entityManager->flush();
-
             return $this->redirectToRoute('stay_success');
         }
 
@@ -83,20 +83,28 @@ class StaysController extends AbstractController
     }
 
     #[Route('/stay-search', name: 'stay_search', methods: ['GET'])]
-    public function search(Request $request, EntityManagerInterface $entityManager): Response
+    public function search(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        SpecialitiesRepository $specialitiesRepository,
+        DoctorsRepository $doctorsRepository,
+    ): Response
     {
-        $speciality = $request->query->get('speciality');
-        $specialities = $this->specialityService->getSpecialities();
-        ksort($specialities);
-
+        $specialityId = $request->query->get('speciality');
+        $speciality = $specialitiesRepository->findOneBy(['id'=> $specialityId]);
         $doctors = [];
         $reasons = [];
 
         if ($speciality) {
-            $doctorRepository = $entityManager->getRepository(Doctors::class);
-            $doctors = $doctorRepository->findBy(['speciality' => $speciality]);
+            // TODO : changer speciality par l'identifiant de l'objet Specialities.
+            $doctors = $doctorsRepository->findBy(['speciality' => $speciality->getCode()]);
 
-            $reasons = $this->specialityService->getReasonsBySpeciality($speciality);
+            foreach ($speciality->getReasons()->toArray() as $reason) {
+                $reasons[] = [
+                    'id' => $reason->getId(),
+                    'name' => $reason->getName()
+                ];
+            }
         }
 
         return $this->json([

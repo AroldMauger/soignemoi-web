@@ -22,11 +22,13 @@ class Stays
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $leavingdate = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $speciality = null;
+    #[ORM\ManyToOne()]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Specialities $speciality = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $reason = null;
+    #[ORM\ManyToOne()]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Reasons $reason = null;
 
     #[ORM\ManyToOne(inversedBy: 'stays')]
     #[ORM\JoinColumn(nullable: false)]
@@ -90,24 +92,24 @@ class Stays
         return $this;
     }
 
-    public function getSpeciality(): ?string
+    public function getSpeciality(): ?Specialities
     {
         return $this->speciality;
     }
 
-    public function setSpeciality(string $speciality): static
+    public function setSpeciality(Specialities $speciality): static
     {
         $this->speciality = $speciality;
 
         return $this;
     }
 
-    public function getReason(): ?string
+    public function getReason(): ?Reasons
     {
         return $this->reason;
     }
 
-    public function setReason(string $reason): static
+    public function setReason(Reasons $reason): static
     {
         $this->reason = $reason;
 
@@ -221,4 +223,5 @@ class Stays
 
         return $this;
     }
+
 }
