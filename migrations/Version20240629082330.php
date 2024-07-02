@@ -16,8 +16,7 @@ final class Version20240629082330 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // Ajouter la colonne roles de type JSON avec une valeur par défaut vide
-        $this->addSql('ALTER TABLE users ADD roles JSON NOT NULL DEFAULT \'[]\'');
+        $this->addSql('ALTER TABLE users ADD roles JSON NOT NULL');
     }
 
     public function down(Schema $schema): void

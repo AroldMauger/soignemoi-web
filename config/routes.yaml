@@ -3,12 +3,23 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
 admin_save_planning:
     path: /admin/save-planning
     controller: App\Controller\AdminController::savePlanning
     methods: [POST]
-# config/routes.yaml
+
 get_availability:
     path: /get-availability
     controller: App\Controller\StaysController::getAvailability
-    methods: POST
+    methods: [POST]
+
+stay_search:
+    path: /stay-search
+    controller: App\Controller\StaysController::search
+    methods: [GET]
+
+submit_stay:
+    path: /submit-stay
+    controller: App\Controller\StaysController::submitStay
+    methods: [POST]

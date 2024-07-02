@@ -26,3 +26,5 @@ services:
     App\Security\LoginAuthenticator:
         arguments:
             $authorizationChecker: '@security.authorization_checker'
+
+

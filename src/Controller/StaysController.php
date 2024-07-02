@@ -147,4 +147,29 @@ class StaysController extends AbstractController
 
         return $this->json(['slots' => $availableSlots]);
     }
+
+    #[Route('/submit-stay', name: 'submit_stay', methods: ['POST'])]
+    public function submitStay(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $stay = new Stays();
+        $form = $this->createForm(StaysType::class, $stay);
+        $form->submit($data);  // Soumettre les données du formulaire
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if (isset($data['extend']) && $data['extend'] === 'no') {
+                $stay->setLeavingdate($stay->getEntrydate());
+            }
+
+            $stay->setUser($this->getUser());
+            $stay->setStatus('en cours');
+
+            $entityManager->persist($stay);
+            $entityManager->flush();
+
+            return new JsonResponse(['message' => 'Stay successfully created'], Response::HTTP_OK);
+        }
+
+        return new JsonResponse(['error' => 'Invalid data', 'details' => (string) $form->getErrors(true, false)], Response::HTTP_BAD_REQUEST);
+    }
 }

@@ -39,10 +39,17 @@ class Doctors
     #[ORM\OneToMany(targetEntity: Stays::class, mappedBy: 'doctor')]
     private Collection $stays;
 
+    /**
+     * @var Collection<int, Opinions>
+     */
+    #[ORM\OneToMany(targetEntity: Opinions::class, mappedBy: 'doctor')]
+    private Collection $opinions;
+
     public function __construct()
     {
         $this->plannings = new ArrayCollection();
         $this->stays = new ArrayCollection();
+        $this->opinions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -178,5 +185,35 @@ class Doctors
     public function getFullname(): string
     {
         return $this->firstname . ' ' . $this->lastname;
+    }
+
+    /**
+     * @return Collection<int, Opinions>
+     */
+    public function getOpinions(): Collection
+    {
+        return $this->opinions;
+    }
+
+    public function addOpinion(Opinions $opinion): static
+    {
+        if (!$this->opinions->contains($opinion)) {
+            $this->opinions->add($opinion);
+            $opinion->setDoctor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOpinion(Opinions $opinion): static
+    {
+        if ($this->opinions->removeElement($opinion)) {
+            // set the owning side to null (unless already changed)
+            if ($opinion->getDoctor() === $this) {
+                $opinion->setDoctor(null);
+            }
+        }
+
+        return $this;
     }
 }

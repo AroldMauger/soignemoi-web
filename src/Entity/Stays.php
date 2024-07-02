@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\StaysRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -40,6 +42,24 @@ class Stays
 
     #[ORM\Column(length: 255)]
     private ?string $status = null;
+
+    /**
+     * @var Collection<int, Opinions>
+     */
+    #[ORM\OneToMany(targetEntity: Opinions::class, mappedBy: 'stay')]
+    private Collection $opinions;
+
+    /**
+     * @var Collection<int, Prescriptions>
+     */
+    #[ORM\OneToMany(targetEntity: Prescriptions::class, mappedBy: 'stay')]
+    private Collection $prescriptions;
+
+    public function __construct()
+    {
+        $this->opinions = new ArrayCollection();
+        $this->prescriptions = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -138,6 +158,66 @@ class Stays
     public function setStatus(string $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Opinions>
+     */
+    public function getOpinions(): Collection
+    {
+        return $this->opinions;
+    }
+
+    public function addOpinion(Opinions $opinion): static
+    {
+        if (!$this->opinions->contains($opinion)) {
+            $this->opinions->add($opinion);
+            $opinion->setStay($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOpinion(Opinions $opinion): static
+    {
+        if ($this->opinions->removeElement($opinion)) {
+            // set the owning side to null (unless already changed)
+            if ($opinion->getStay() === $this) {
+                $opinion->setStay(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Prescriptions>
+     */
+    public function getPrescriptions(): Collection
+    {
+        return $this->prescriptions;
+    }
+
+    public function addPrescription(Prescriptions $prescription): static
+    {
+        if (!$this->prescriptions->contains($prescription)) {
+            $this->prescriptions->add($prescription);
+            $prescription->setStay($this);
+        }
+
+        return $this;
+    }
+
+    public function removePrescription(Prescriptions $prescription): static
+    {
+        if ($this->prescriptions->removeElement($prescription)) {
+            // set the owning side to null (unless already changed)
+            if ($prescription->getStay() === $this) {
+                $prescription->setStay(null);
+            }
+        }
 
         return $this;
     }

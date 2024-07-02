@@ -63,9 +63,8 @@
             <label for="inputPassword">Password</label>
             <input type="password" name="password" id="inputPassword" class="form-control input-in-login-form" autocomplete="current-password" required>
 
-            <input type="hidden" name="_csrf_token"
-                   value="{{ csrf_token('authenticate') }}"
-            >
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
             <div class="login-button-container">
                 <button class="btn btn-lg btn-primary" type="submit" id="submit-login">
                     SE CONNECTER

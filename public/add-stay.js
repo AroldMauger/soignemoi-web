@@ -1,16 +1,16 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const form = document.querySelector('form');  // Sélecteur du formulaire
+    const form = document.querySelector('form');
     const specialitySelector = document.querySelector('.speciality-selector');
     const reasonSelector = document.querySelector('.reason-selector');
     const doctorSelector = document.querySelector('.doctor-selector');
-    const slotSelector = document.querySelector('.form_slot');  // Sélecteur de créneaux horaires
+    const slotSelector = document.querySelector('.form_slot');
     const searchButton = document.querySelector('#search-speciality');
     const viewAvailabilityButton = document.querySelector('#view-availability');
     const leavingDateGroup = document.querySelector('#leaving-date-group');
     const extendYes = document.querySelector('#extend-yes');
     const extendNo = document.querySelector('#extend-no');
     const availabilityContainer = document.querySelector('#availability-container');
-    const entryDate = document.querySelector('.entrydate-input');  // Corrigez ici l'attribut 'entrydate-input'
+    const entryDate = document.querySelector('.entrydate-input');
 
     if (extendYes.checked) {
         leavingDateGroup.style.display = 'block';
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
             fetch(`/stay-search?speciality=${speciality}`)
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Data from search:', data);  // Affiche les données reçues
+                    console.log('Data from search:', data);
 
                     reasonSelector.innerHTML = '';
                     Object.keys(data.reasons).forEach(key => {
@@ -63,10 +63,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     viewAvailabilityButton.addEventListener('click', () => {
         const doctorId = doctorSelector.value;
-        const entryDateValue = entryDate.value;  // Récupérez la valeur de l'entrée de date
+        const entryDateValue = entryDate.value;
 
         if (doctorId && entryDateValue) {
-            // Retirer l'heure de la date si elle est présente
             const formattedDate = entryDateValue.split('T')[0];
 
             fetch('/get-availability', {
@@ -77,15 +76,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 body: new URLSearchParams({
                     doctor_id: doctorId,
-                    date: formattedDate  // Envoyer uniquement la date sans l'heure
+                    date: formattedDate
                 })
             })
                 .then(response => {
-                    console.log('Response Status:', response.status);  // Affiche le statut de la réponse
+                    console.log('Response Status:', response.status);
                     return response.json();
                 })
                 .then(data => {
-                    console.log('Data from availability:', data);  // Affiche les données reçues
+                    console.log('Data from availability:', data);
 
                     if (data.slots && data.slots.length > 0) {
                         slotSelector.innerHTML = '<option value="">Choisissez un créneau</option>';
@@ -111,24 +110,45 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Afficher les données du formulaire dans la console lors de la soumission
-    form.addEventListener('submit', function (event) {
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.querySelector('form');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-        const formData = new FormData(form);
-        const data = {};
-        formData.forEach((value, key) => {
-            if (data[key]) {
-                if (!Array.isArray(data[key])) {
-                    data[key] = [data[key]];
-                }
-                data[key].push(value);
-            } else {
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+            const data = {};
+
+            formData.forEach((value, key) => {
                 data[key] = value;
-            }
+            });
+
+            data['stays[_token]'] = csrfToken;  // Assurez-vous d'ajouter le token CSRF
+
+            fetch('/add-stay', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    if (data.message) {
+                        alert(data.message);
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch Error:', error);
+                    alert('An error occurred while submitting the form.');
+                });
         });
-
-        console.log('Form Data:', data);  // Affiche les données du formulaire dans la console
-
-        // form.submit();  // Décommentez ceci pour envoyer le formulaire après le test
     });
+
+
 });

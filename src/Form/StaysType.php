@@ -7,6 +7,7 @@ use App\Entity\Slot;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -22,11 +23,12 @@ class StaysType extends AbstractType
         $builder
             ->add('entrydate', DateTimeType::class, [
                 'widget' => 'single_text',
-                'label' => 'Entrée :',
+                'html5' => true,
+                'required' => true,
             ])
             ->add('leavingdate', DateTimeType::class, [
-                'widget' => 'single_text',
-                'label' => 'Sortie :',
+                'widget' => 'single_text', // Utilisez un champ de type "single_text" pour un format de date compatible avec HTML5
+                'html5' => true,
                 'required' => false,
             ])
             ->add('speciality', ChoiceType::class, [
