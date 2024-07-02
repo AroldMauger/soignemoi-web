@@ -25,11 +25,14 @@ class StaysType extends AbstractType
                 'widget' => 'single_text',
                 'html5' => true,
                 'required' => true,
+                'label' => "Date de début du séjour"
             ])
             ->add('leavingdate', DateTimeType::class, [
                 'widget' => 'single_text', // Utilisez un champ de type "single_text" pour un format de date compatible avec HTML5
                 'html5' => true,
                 'required' => false,
+                'label' => "Date de fin du séjour"
+
             ])
             ->add('speciality', ChoiceType::class, [
                 'choices' => array_flip($specialities),
@@ -47,7 +50,7 @@ class StaysType extends AbstractType
                 'choice_label' => function (Doctors $doctor) {
                     return $doctor->getFirstname() . ' ' . $doctor->getLastname();
                 },
-                'label' => 'Nom du médecin / spécialiste médical',
+                'label' => 'Nom du spécialiste',
                 'attr' => ['class' => 'doctor-selector'],
             ])
             ->add('slot', EntityType::class, [
@@ -55,7 +58,7 @@ class StaysType extends AbstractType
                 'choice_label' => function (Slot $slot) {
                     return $slot->getStarttime()->format('H:i');
                 },
-                'label' => 'Heure de RDV (choisir le créneau qui vous convient)',
+                'label' => false,
                 'choices' => [],
             ]);
     }

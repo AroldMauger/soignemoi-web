@@ -789,8 +789,53 @@ label {
 /* ADD-STAY */
 /* Ajoutez ce CSS dans votre fichier app.css ou un autre fichier de style */
 
-.availability-container {
+.main-add-stay {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-inline:50px;
+    width: 100%;
+}
+
+.container-for-form {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin:auto;
+}
+
+.form-add-stay {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: 40px;
+}
+
+#availability-container {
     margin-top: 20px;
+}
+
+#availability-container p{
+    font-weight: 600;
+    font-size: 1.4rem;
+    color:#0083BD;
+}
+
+#stays_slot {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+.title-in-add-stay {
+    color:#0083BD;
+    margin-bottom: 40px;
 }
 
 .day-container {
@@ -811,10 +856,8 @@ label {
     border-radius: 4px;
 }
 
-/* TEST */
-/* app.css */
+/* FORMULAIRE ADD STAY */
 
-/* Style général du corps */
 .body-add-stay {
     font-family: 'Manrope', sans-serif;
     background-color: #f5f5f5;
@@ -822,6 +865,7 @@ label {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     padding: 2rem;
 }
 
@@ -830,6 +874,8 @@ label {
 /* Style des groupes de formulaire */
 .form-group {
     margin-bottom: 1.5rem;
+    color:#0083BD;
+
 }
 
 /* Style des labels */
@@ -837,7 +883,41 @@ label {
     display: block;
     font-weight: 600;
     margin-bottom: 0.5rem;
-    color: #555;
+    color:#0083BD;
+
+}
+
+.input-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.input-row button {
+    height: 20%;
+}
+
+.input-in-add-stay-row div {
+    display: flex;
+    gap:20px;
+}
+
+.entrydate-input, #stays_leavingdate{
+    width: 40%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+.input-in-add-stay-column div{
+    display: flex;
+    flex-direction: column;
+    gap:20px;
 }
 
 .speciality-container select, .reason-container select, .doctor-container select {
@@ -940,4 +1020,97 @@ label {
 /* Container des créneaux horaires */
 .availability-container {
     margin-top: 1.5rem;
+}
+
+.question-in-add-stay {
+    font-weight: 600;
+    font-size: 1.4rem;
+}
+
+
+/* HISTORY */
+
+
+.endedstay_title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.rdv-all-cards {
+    padding-inline: 2rem;
+}
+
+.table-history {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2rem;
+}
+
+.table-history td, .table-history th {
+    border: 1px solid #8A9EA0;
+    padding: 1rem;
+}
+
+.table-history th {
+    background-color: #36D2A7;
+    color: #fff;
+}
+
+.table-history td {
+    background-color: #f5f7fa;
+    text-align: center;
+}
+
+.table-history tr:nth-child(even) td {
+    background-color: #eef2f7;
+}
+
+.button-column {
+    text-align: center;
+}
+
+.button-table {
+    background-color: #0066CC;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button-table:hover {
+    background-color: #004ba0;
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 2rem;
+    font-size: 1.2rem;
+}
+
+.pagination-container a {
+    color: #0066CC;
+    text-decoration: none;
+    margin: 0 0.5rem;
+    transition: color 0.3s;
+}
+
+.pagination-container a:hover {
+    color: #004ba0;
+}
+
+.current-page-link {
+    color: #333;
+    font-weight: 700;
+    font-size: 24px;
+}
+
+.date-align {
+    display: flex;
+    justify-content: center;
+    gap:10px;
 }

@@ -1,6 +1,5 @@
 <?php
 // src/Repository/StaysRepository.php
-// src/Repository/StaysRepository.php
 
 namespace App\Repository;
 
@@ -43,6 +42,59 @@ class StaysRepository extends ServiceEntityRepository
             ->orderBy('s.entrydate', 'ASC')
             ->getQuery()
             ->getResult();
+    }
+
+    // Méthode pour mettre à jour le statut des séjours
+    public function updateStayStatuses(): void
+    {
+        $now = new DateTime();
+        $this->createQueryBuilder('s')
+            ->update()
+            ->set('s.status', ':status')
+            ->where('s.entrydate <= :now')
+            ->andWhere('s.leavingdate >= :now')
+            ->setParameter('now', $now)
+            ->setParameter('status', 'en cours')
+            ->getQuery()
+            ->execute();
+
+        $this->createQueryBuilder('s')
+            ->update()
+            ->set('s.status', ':status')
+            ->where('s.entrydate > :now')
+            ->setParameter('now', $now)
+            ->setParameter('status', 'à venir')
+            ->getQuery()
+            ->execute();
+
+        $this->createQueryBuilder('s')
+            ->update()
+            ->set('s.status', ':status')
+            ->where('s.leavingdate < :now')
+            ->setParameter('now', $now)
+            ->setParameter('status', 'terminé')
+            ->getQuery()
+            ->execute();
+    }
+
+    public function findFinishedPaginated (int $page, int $limit) {
+        return $this->createQueryBuilder('a')
+            ->select('a')
+            ->where('a.status = :status')
+            ->setParameter('status', "terminé")
+            ->setFirstResult($page * $limit)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+    public function countAllInProgress()
+    {
+        return $this->createQueryBuilder('a')
+            ->select('COUNT(a)')
+            ->where('a.status = :status')
+            ->setParameter('status', 'en cours')
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }
 

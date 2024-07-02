@@ -13,8 +13,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-use App\Form\NewAppointmentType;
-use App\Repository\AppointmentsRepository;
 
 class HomeController extends AbstractController {
 
@@ -22,6 +20,10 @@ class HomeController extends AbstractController {
     public function dashboard(StaysRepository $staysRepository): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
+
+        // Mettre à jour les statuts des séjours
+        $staysRepository->updateStayStatuses();
+
         // Récupérer les séjours en cours
         $currentStays = $staysRepository->findCurrentStays();
 
@@ -60,5 +62,21 @@ class HomeController extends AbstractController {
     public function signupSuccess(): Response
     {
         return $this->render('pages/add-stay-success.html.twig');
+    }
+
+    #[Route('/history', name:"history", methods: ['GET'])]
+    public function history(StaysRepository $repo, Request $request)
+    {
+        $page = $request->get('page', 0);
+        $limit = $request->get('limit', 5);
+        $count = $repo->count(["status" => "terminé"]);
+        $stays = $repo->findFinishedPaginated($page, $limit);
+        $totalPages = (int) ceil($count/$limit);
+        $previousPage = $page == 0? null:$page-1;
+        $nextPage = ($page+1 == $totalPages || $page>$totalPages) ? null:$page+1;
+        $firstPage = $page == 0? null: 0;
+        $lastPage = $totalPages - 1;
+
+        return $this->render("pages/history.html.twig", ["stays" => $stays, "firstPage" => $firstPage, "lastPage" => $lastPage, "previousPage" => $previousPage, "nextPage" => $nextPage, "page" => $page]);
     }
 }
