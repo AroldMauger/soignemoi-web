@@ -1,14 +1,14 @@
 <?php
+// src/Repository/StaysRepository.php
+// src/Repository/StaysRepository.php
 
 namespace App\Repository;
 
 use App\Entity\Stays;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use DateTime;
 
-/**
- * @extends ServiceEntityRepository<Stays>
- */
 class StaysRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -16,28 +16,33 @@ class StaysRepository extends ServiceEntityRepository
         parent::__construct($registry, Stays::class);
     }
 
-//    /**
-//     * @return Stays[] Returns an array of Stays objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('s.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    // Méthode pour récupérer les séjours en cours
+    public function findCurrentStays(): array
+    {
+        $now = new DateTime();
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.doctor', 'd')
+            ->addSelect('d')
+            ->where('s.entrydate <= :now')
+            ->andWhere('s.leavingdate >= :now')
+            ->setParameter('now', $now)
+            ->orderBy('s.entrydate', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 
-//    public function findOneBySomeField($value): ?Stays
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    // Méthode pour récupérer les séjours à venir
+    public function findUpcomingStays(): array
+    {
+        $now = new DateTime();
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.doctor', 'd')
+            ->addSelect('d')
+            ->where('s.entrydate > :now')
+            ->setParameter('now', $now)
+            ->orderBy('s.entrydate', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
+

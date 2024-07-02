@@ -25,16 +25,21 @@
     <div class="endedstay_title_container in-progress-container">
         <p class="endedstay_title">RENDEZ-VOUS EN COURS</p>
     </div>
-    <div class="card-container in-progress-card">
-        <div class="card-subcontainer">
-            <p class="date-in-card">Entrée : 16h00 (26/06/2024)</p>
-            <p class="date-in-card">Sortie : 10h00 (27/06/2024)</p>
+
+    {% for stay in currentStays %}
+        <div class="card-container in-progress-card">
+            <div class="card-subcontainer">
+                <p class="date-in-card">Entrée : {{ stay.entrydate|date('H\\hi') }}  ({{ stay.entrydate|date('d/m/Y') }})</p>
+                <p class="date-in-card">Sortie : {{ stay.leavingdate|date('H\\hi') }}  ({{ stay.leavingdate|date('d/m/Y') }})</p>
+            </div>
+            <div class="card-subcontainer">
+                <p class="date-in-card">{{ stay.reason }}</p>
+                <p class="doctor-in-card">Docteur {{ stay.doctor.lastname }}, {{ stay.doctor.speciality }}</p>
+            </div>
         </div>
-        <div class="card-subcontainer">
-            <p class="date-in-card">Échographie du 1er trimestre</p>
-            <p class="doctor-in-card">Docteur Hébert, Gynécologue</p>
-        </div>
-    </div>
+    {% else %}
+        <p>Aucun rendez-vous en cours.</p>
+    {% endfor %}
 
 </section>
 
@@ -42,16 +47,21 @@
     <div class="endedstay_title_container futur-stay-container">
         <p class="endedstay_title">RENDEZ-VOUS À VENIR</p>
     </div>
-    <div class="card-container futur-stay-card">
-        <div class="card-subcontainer">
-            <p class="date-in-card">Entrée : 16h00 (26/06/2024)</p>
-            <p class="date-in-card">Sortie : 10h00 (27/06/2024)</p>
+
+    {% for stay in upcomingStays %}
+        <div class="card-container futur-stay-card">
+            <div class="card-subcontainer">
+                <p class="date-in-card">Entrée : {{ stay.entrydate|date('H\\hi') }}  ({{ stay.entrydate|date('d/m/Y') }})</p>
+                <p class="date-in-card">Sortie : {{ stay.leavingdate|date('H\\hi') }}  ({{ stay.leavingdate|date('d/m/Y') }})</p>
+            </div>
+            <div class="card-subcontainer">
+                <p class="date-in-card">{{ stay.reason }}</p>
+                <p class="doctor-in-card">Docteur {{ stay.doctor.lastname }}, {{ stay.doctor.speciality }}</p>
+            </div>
         </div>
-        <div class="card-subcontainer">
-            <p class="date-in-card">Échographie du 1er trimestre</p>
-            <p class="doctor-in-card">Docteur Hébert, Gynécologue</p>
-        </div>
-    </div>
+    {% else %}
+        <p>Aucun rendez-vous à venir.</p>
+    {% endfor %}
 </section>
 
 

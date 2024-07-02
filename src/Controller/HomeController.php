@@ -6,6 +6,7 @@ use App\Entity\Doctors;
 use App\Entity\Stays;
 use App\Form\DoctorsType;
 use App\Form\StaysType;
+use App\Repository\StaysRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,11 +19,19 @@ use App\Repository\AppointmentsRepository;
 class HomeController extends AbstractController {
 
     #[Route('/dashboard', name:"dashboard", methods: ['GET'])]
-    public function dashboard()
+    public function dashboard(StaysRepository $staysRepository): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
+        // Récupérer les séjours en cours
+        $currentStays = $staysRepository->findCurrentStays();
 
-        return $this->render("pages/dashboard.html.twig");
+        // Récupérer les séjours à venir
+        $upcomingStays = $staysRepository->findUpcomingStays();
+
+        return $this->render('pages/dashboard.html.twig', [
+            'currentStays' => $currentStays,
+            'upcomingStays' => $upcomingStays,
+        ]);
     }
 
 

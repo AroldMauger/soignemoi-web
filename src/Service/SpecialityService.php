@@ -31,13 +31,13 @@ class SpecialityService
     {
         $reasons = [
             'Gynecologue' => [
-                'Echographie du 1er trimestre' => 'echographie_1er_trimestre',
-                '1ère consultation gynécologique' => 'consultation_gynécologique',
+                'Echographie du 1er trimestre' => 'Echographie du 1er trimestre',
+                '1ère consultation gynécologique' => '1ère consultation gynécologique',
                 // Ajoutez d'autres raisons pour cette spécialité
             ],
             'Cardiologue' => [
-                'Examen du coeur' => 'examen_du_coeur',
-                '1ère consultation cardiologie' => 'consultation_cardiologie',
+                'Examen du coeur' => 'Examen du coeur',
+                '1ère consultation cardiologie' => '1ère consultation cardiologie',
                 // Ajoutez d'autres raisons pour cette spécialité
             ],
             // Ajoutez d'autres spécialités et leurs raisons respectives
