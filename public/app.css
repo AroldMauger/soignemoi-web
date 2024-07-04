@@ -326,6 +326,7 @@ body {
 .signup-form div{
     display: flex;
     flex-direction: column;
+    color:#0083BD;
 }
 
 .signup-form div input{
@@ -1114,3 +1115,4 @@ label {
     justify-content: center;
     gap:10px;
 }
+

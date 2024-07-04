@@ -12,3 +12,4 @@ function displayLoginForm () {
 function closeLoginForm () {
     loginForm.style.display = "none";
 }
+

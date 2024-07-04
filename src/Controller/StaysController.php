@@ -125,8 +125,10 @@ class StaysController extends AbstractController
             }
 
             $data->setUser($user);  // Assurez-vous que l'utilisateur est bien affecté
+            $slot->setIsBooked(true); // Met à jour la valeur de isbooked
 
             $entityManager->persist($data);
+            $entityManager->persist($slot); // Persiste l'entité Slot avec la nouvelle valeur
             $entityManager->flush();
 
             return $this->redirectToRoute('stay_success');

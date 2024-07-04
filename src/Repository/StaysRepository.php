@@ -1,6 +1,8 @@
 <?php
 // src/Repository/StaysRepository.php
 
+// src/Repository/StaysRepository.php
+
 namespace App\Repository;
 
 use App\Entity\Stays;
@@ -22,8 +24,11 @@ class StaysRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('s')
             ->leftJoin('s.doctor', 'd')
             ->addSelect('d')
+            ->leftJoin('s.slot', 'sl') // Jointure avec l'entité Slot
+            ->addSelect('sl')
             ->where('s.entrydate <= :now')
             ->andWhere('s.leavingdate >= :now')
+            ->andWhere('sl.isbooked = true') // Condition pour vérifier si le slot est booké
             ->setParameter('now', $now)
             ->orderBy('s.entrydate', 'ASC')
             ->getQuery()
@@ -37,7 +42,10 @@ class StaysRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('s')
             ->leftJoin('s.doctor', 'd')
             ->addSelect('d')
+            ->leftJoin('s.slot', 'sl') // Jointure avec l'entité Slot
+            ->addSelect('sl')
             ->where('s.entrydate > :now')
+            ->andWhere('sl.isbooked = true') // Condition pour vérifier si le slot est booké
             ->setParameter('now', $now)
             ->orderBy('s.entrydate', 'ASC')
             ->getQuery()
@@ -77,25 +85,31 @@ class StaysRepository extends ServiceEntityRepository
             ->execute();
     }
 
-    public function findFinishedPaginated (int $page, int $limit) {
+    public function findFinishedPaginated(int $page, int $limit): array
+    {
         return $this->createQueryBuilder('a')
             ->select('a')
+            ->leftJoin('a.slot', 'sl') // Jointure avec l'entité Slot
+            ->addSelect('sl')
             ->where('a.status = :status')
-            ->setParameter('status', "terminé")
+            ->andWhere('sl.isbooked = true') // Condition pour vérifier si le slot est booké
+            ->setParameter('status', 'terminé')
             ->setFirstResult($page * $limit)
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
     }
-    public function countAllInProgress()
+
+    public function countAllInProgress(): int
     {
         return $this->createQueryBuilder('a')
             ->select('COUNT(a)')
+            ->leftJoin('a.slot', 'sl') // Jointure avec l'entité Slot
+            ->addSelect('sl')
             ->where('a.status = :status')
+            ->andWhere('sl.isbooked = true') // Condition pour vérifier si le slot est booké
             ->setParameter('status', 'en cours')
             ->getQuery()
             ->getSingleScalarResult();
     }
-
 }
-

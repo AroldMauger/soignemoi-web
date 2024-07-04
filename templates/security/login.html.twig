@@ -2,7 +2,6 @@
 
 {% block title %}Log in!{% endblock %}
 
-
 {% block body %}
     <header class="header_in_mainpage">
         <img class="logo_main" src="logo-soignemoi.png" alt="logo de l'hôpital SoigneMoi">
@@ -10,7 +9,9 @@
             <button class="signup_button">Créer un compte</button>
         </a>
     </header>
-    <main class="main_in_mainpage">
+
+    <main class="main_in_mainpage signup-main">
+
         <section class="presentation_in_main_page descr-and-img-container-landingpage">
             <div class="text_presentation content_in_mainpage">
                 <p class="welcome_text">Bienvenue sur le site de l’hôpital <strong class="green">Soigne</strong><strong class="orange">Moi</strong> de la région lilloise.</p>
@@ -22,7 +23,15 @@
                 <div class="login_button_container">
                     <button id="login_button_desktop" class="login_button">SE CONNECTER</button>
                 </div>
+                {% if error %}
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            alert("Identifiants et/ou mot de passe incorrect(s)");
+                        });
+                    </script>
+                {% endif %}
             </div>
+
             <div class="image_presentation content_in_mainpage">
                 <div class="container_above_image">
                     <div class="new">
@@ -42,21 +51,17 @@
 
                 <img class="image_in_mainpage" src="doctor.jpg" alt="photo d'un docteur en tenue de travail">
             </div>
-
         </section>
-        <!-- Modal pour la connexion-->
-
-
     </main>
+
+
     <div class="login-form">
         <div class="closebutton_container">
             <p class="instruction_modal">Entrez vos identifiants :</p>
             <span class="closebutton_modal">X</span>
         </div>
         <form method="post" class="inputs-container-login">
-            {% if error %}
-                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-            {% endif %}
+
 
             <label for="inputEmail">Email</label>
             <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control input-in-login-form" autocomplete="email" required autofocus>
@@ -72,7 +77,6 @@
             </div>
         </form>
     </div>
-
     <script src="login.js"></script>
 
 {% endblock %}
