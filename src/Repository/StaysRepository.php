@@ -96,5 +96,6 @@ class StaysRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
 }
 

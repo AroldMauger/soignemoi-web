@@ -2,17 +2,12 @@
 
 namespace App\Controller;
 
-use App\Entity\Doctors;
 use App\Entity\Stays;
-use App\Form\DoctorsType;
-use App\Form\StaysType;
 use App\Repository\StaysRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
-
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class HomeController extends AbstractController {
 
@@ -21,13 +16,9 @@ class HomeController extends AbstractController {
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        // Mettre à jour les statuts des séjours
         $staysRepository->updateStayStatuses();
 
-        // Récupérer les séjours en cours
         $currentStays = $staysRepository->findCurrentStays();
-
-        // Récupérer les séjours à venir
         $upcomingStays = $staysRepository->findUpcomingStays();
 
         return $this->render('pages/dashboard.html.twig', [
@@ -37,32 +28,6 @@ class HomeController extends AbstractController {
     }
 
 
-
-    #[Route('/add-stay', name: 'add-stay', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $stay = new Stays();
-        $form = $this->createForm(StaysType::class, $stay);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($stay);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('stay_success');
-        }
-
-        return $this->render('pages/add-stay.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
-
-    #[Route('/add-stay-success', name: 'stay_success')]
-    public function signupSuccess(): Response
-    {
-        return $this->render('pages/add-stay-success.html.twig');
-    }
 
     #[Route('/history', name:"history", methods: ['GET'])]
     public function history(StaysRepository $repo, Request $request)

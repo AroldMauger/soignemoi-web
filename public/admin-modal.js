@@ -112,11 +112,32 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!valid) {
             showError(errorMessages.join('\n'));  // Affiche tous les messages d'erreur
         } else {
+            // Ajoutez la date au début et à la fin des créneaux horaires
+            slots.forEach(slot => {
+                slot.starttime = `${date}T${slot.starttime}`;  // Format YYYY-MM-DDTHH:MM
+                slot.endtime = `${date}T${slot.endtime}`;
+            });
+
             slotsDataInput.value = JSON.stringify(slots);
             planningDateHiddenInput.value = date;
+
+            // Assurez-vous que doctorId est défini
+            const doctorId = doctorIdInput.value;
+            if (!doctorId) {
+                showError('Le médecin doit être sélectionné.');
+                return;
+            }
+
+            // Ajoutez doctorId dans le formulaire
+            const doctorIdHiddenInput = document.createElement('input');
+            doctorIdHiddenInput.type = 'hidden';
+            doctorIdHiddenInput.name = 'doctorId';
+            doctorIdHiddenInput.value = doctorId;
+            document.getElementById('planningForm').appendChild(doctorIdHiddenInput);
 
             // Soumission du formulaire
             document.getElementById('planningForm').submit();
         }
     });
+
 });

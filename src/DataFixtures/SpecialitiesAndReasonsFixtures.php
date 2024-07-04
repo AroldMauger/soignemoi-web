@@ -42,6 +42,10 @@ class SpecialitiesAndReasonsFixtures extends Fixture
                 '1ère consultation cardiologie' => '1ère consultation cardiologie',
                 // Ajoutez d'autres raisons pour cette spécialité
             ],
+            'Neurologue' => [
+                'Consultation neurologie' => 'Consultation neurologie',
+                // Ajoutez d'autres raisons pour cette spécialité
+            ],
             // Ajoutez d'autres spécialités et leurs raisons respectives
         ];
 

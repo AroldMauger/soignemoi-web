@@ -1,7 +1,7 @@
 <?php
-
 namespace App\Repository;
 
+use App\Entity\Doctors;  // Importer l'entité correcte
 use App\Entity\Slot;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -13,18 +13,28 @@ class SlotRepository extends ServiceEntityRepository
         parent::__construct($registry, Slot::class);
     }
 
-    public function findAvailableSlots(int $doctorId, \DateTimeInterface $date): array
+    // src/Repository/SlotRepository.php
+
+    // src/Repository/SlotRepository.php
+
+    public function findAvailableSlots(Doctors $doctor, \DateTime $dateStart, ?\DateTime $dateEnd = null): array
     {
-        return $this->createQueryBuilder('s')
-            ->leftJoin('s.planning', 'p')  // Joindre Planning pour obtenir des slots spécifiques
-            ->where('s.isbooked = :isBooked')
-            ->andWhere('p.doctor = :doctorId')
-            ->andWhere('p.date = :date')  // Filtrer les slots pour la date du planning
-            ->setParameter('isBooked', false)
-            ->setParameter('doctorId', $doctorId)
-            ->setParameter('date', $date->format('Y-m-d'))  // Assurez-vous d'envoyer uniquement la date
-            ->getQuery()
-            ->getResult();
+        // Exemple de requête pour trouver des créneaux disponibles
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->where('s.doctor = :doctor')
+            ->andWhere('s.starttime >= :starttime')
+            ->setParameter('doctor', $doctor)
+            ->setParameter('starttime', $dateStart)
+            ->orderBy('s.starttime', 'ASC');
+
+        if ($dateEnd) {
+            $queryBuilder->andWhere('s.endtime <= :endtime')
+                ->setParameter('endtime', $dateEnd);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
     }
 
+
 }
+

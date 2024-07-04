@@ -21,6 +21,7 @@
     <h2 class="signup-title">AJOUTER UN MÉDECIN</h2>
     <form class="signup-form" method="post" action="{{ path('doctor_new') }}">
         {{ form_start(form) }}
+
         {{ form_row(form.firstname, {'label': 'Prénom'}) }}
         {{ form_row(form.lastname, {'label': 'Nom'}) }}
         {{ form_row(form.speciality, {'label': 'Spécialité'}) }}

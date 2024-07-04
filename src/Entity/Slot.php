@@ -16,7 +16,7 @@ class Slot
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'slots')]
+    #[ORM\ManyToOne(targetEntity: Planning::class, inversedBy: 'slots')]
     private ?Planning $planning = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
@@ -28,11 +28,12 @@ class Slot
     #[ORM\Column(type: Types::BOOLEAN)]
     private bool $isbooked = false;
 
-    /**
-     * @var Collection<int, Stays>
-     */
     #[ORM\OneToMany(targetEntity: Stays::class, mappedBy: 'slot')]
     private Collection $stays;
+
+    #[ORM\ManyToOne(targetEntity: Doctors::class, inversedBy: 'slots')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Doctors $doctor = null;
 
     public function __construct()
     {
@@ -52,7 +53,6 @@ class Slot
     public function setPlanning(?Planning $planning): static
     {
         $this->planning = $planning;
-
         return $this;
     }
 
@@ -64,7 +64,6 @@ class Slot
     public function setStarttime(\DateTimeInterface $starttime): static
     {
         $this->starttime = $starttime;
-
         return $this;
     }
 
@@ -76,25 +75,36 @@ class Slot
     public function setEndtime(\DateTimeInterface $endtime): static
     {
         $this->endtime = $endtime;
-
         return $this;
     }
 
-    public function isBooked(): bool  // Méthode renommée pour correspondre à la convention de nommage
+    public function isBooked(): bool
     {
         return $this->isbooked;
     }
 
-    public function setIsBooked(bool $isbooked): static  // Méthode renommée pour correspondre à la convention de nommage
+    public function setIsBooked(bool $isbooked): static
     {
         $this->isbooked = $isbooked;
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Stays>
-     */
+    public function getDoctor(): ?Doctors
+    {
+        return $this->doctor;
+    }
+
+    public function setDoctor(?Doctors $doctor): static
+    {
+        $this->doctor = $doctor;
+        return $this;
+    }
+
+    public function getFormattedTime(): string
+    {
+        return $this->starttime->format('H:i') . ' - ' . $this->endtime->format('H:i');
+    }
+
     public function getStays(): Collection
     {
         return $this->stays;
@@ -106,23 +116,21 @@ class Slot
             $this->stays->add($stay);
             $stay->setSlot($this);
         }
-
         return $this;
     }
 
     public function removeStay(Stays $stay): static
     {
         if ($this->stays->removeElement($stay)) {
-            // set the owning side to null (unless already changed)
             if ($stay->getSlot() === $this) {
                 $stay->setSlot(null);
             }
         }
-
         return $this;
     }
-    public function getFormattedTime(): string
+    public function __toString(): string
     {
         return $this->starttime->format('H:i') . ' - ' . $this->endtime->format('H:i');
     }
+
 }

@@ -13,8 +13,8 @@ class Reasons
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'reasons')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Specialities::class, inversedBy: 'reasons')]
+    #[ORM\JoinColumn(name: 'speciality_id', referencedColumnName: 'id', nullable: false)]
     private ?Specialities $speciality = null;
 
     #[ORM\Column(length: 255)]
@@ -62,5 +62,9 @@ class Reasons
         $this->code = $code;
 
         return $this;
+    }
+    public function __toString(): string
+    {
+        return $this->name;  // Assurez-vous que 'name' est un champ de l'entité Reasons
     }
 }

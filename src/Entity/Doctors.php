@@ -21,8 +21,9 @@ class Doctors
     #[ORM\Column(length: 255)]
     private ?string $firstname = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $speciality = null;
+    #[ORM\ManyToOne(targetEntity: Specialities::class, inversedBy: 'doctors')]
+    #[ORM\JoinColumn(name: 'speciality_id', referencedColumnName: 'id', nullable: false)]
+    private ?Specialities $speciality = null;
 
     #[ORM\Column(length: 255)]
     private ?string $identification = null;
@@ -45,11 +46,23 @@ class Doctors
     #[ORM\OneToMany(targetEntity: Opinions::class, mappedBy: 'doctor')]
     private Collection $opinions;
 
+    /**
+     * @var Collection<int, Slot>
+     */
+    #[ORM\OneToMany(targetEntity: Slot::class, mappedBy: 'doctor')]
+    private Collection $slots;
+
     public function __construct()
     {
         $this->plannings = new ArrayCollection();
         $this->stays = new ArrayCollection();
         $this->opinions = new ArrayCollection();
+        $this->slots = new ArrayCollection();
+    }
+
+    public function getSlots(): Collection
+    {
+        return $this->slots;
     }
 
     public function getId(): ?int
@@ -81,12 +94,12 @@ class Doctors
         return $this;
     }
 
-    public function getSpeciality(): ?string
+    public function getSpeciality(): ?Specialities
     {
         return $this->speciality;
     }
 
-    public function setSpeciality(string $speciality): static
+    public function setSpeciality(?Specialities $speciality): static
     {
         $this->speciality = $speciality;
 
@@ -164,6 +177,7 @@ class Doctors
 
         return $this;
     }
+
     /**
      * @return Collection<int, Slot>
      */
@@ -173,7 +187,7 @@ class Doctors
 
         foreach ($this->getPlannings() as $planning) {
             foreach ($planning->getSlots() as $slot) {
-                if (!$slot->isbooked()) {
+                if (!$slot->isBooked()) {
                     $slots->add($slot);
                 }
             }

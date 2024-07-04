@@ -28,9 +28,9 @@
     <form class="search-form" method="get" action="{{ path('doctor_search') }}">
         <select id="admin-select-doctor" name="speciality">
             <option value="">Choisissez une spécialité</option>
-            {% for key, value in specialities %}
-                <option value="{{ value }}" {{ app.request.query.get('speciality') == value ? 'selected' : '' }}>
-                    {{ key }}
+            {% for speciality in specialities %}
+                <option value="{{ speciality.id }}" {{ app.request.query.get('speciality') == speciality.id ? 'selected' : '' }}>
+                    {{ speciality.name }}  <!-- Affiche le nom de la spécialité -->
                 </option>
             {% endfor %}
         </select>

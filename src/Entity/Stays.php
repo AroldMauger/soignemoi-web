@@ -38,7 +38,7 @@ class Stays
     #[ORM\JoinColumn(nullable: false)]
     private ?Slot $slot = null;
 
-    #[ORM\ManyToOne(inversedBy: 'stays')]
+    #[ORM\ManyToOne(targetEntity: Users::class, inversedBy: 'stays')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Users $user = null;
 

@@ -19,7 +19,14 @@ stay_search:
     controller: App\Controller\StaysController::search
     methods: [GET]
 
-submit_stay:
-    path: /submit-stay
-    controller: App\Controller\StaysController::submitStay
-    methods: [POST]
+add_stay:
+    path: /add-stay
+    controller: App\Controller\StaysController::new
+    methods: [GET, POST]
+
+
+stay_success:
+    path: /stay-success
+    controller: App\Controller\StaysController::staySuccess
+
+

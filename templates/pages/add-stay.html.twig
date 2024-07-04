@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token('stays') }}">
     <title>Prendre un Séjour - Hôpital SoigneMoi</title>
     <link rel="stylesheet" href="{{ asset('app.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,21 +21,17 @@
     <div class="container-for-form">
         <h1 class="title-in-add-stay">PRENDRE RENDEZ-VOUS À L’HÔPITAL</h1>
 
-        <form action="{{ path('add-stay') }}" method="POST" class="form-add-stay">
+        <form action="{{ path('add_stay') }}" method="POST" class="form-add-stay">
             {{ form_start(form) }}
 
-            <input type="hidden" name="stays[user]" value="{{ app.user.id }}">
-            <input type="hidden" name="stays[status]" value="en cours">
-            <input type="hidden" name="stays[_token]" value="{{ csrf_token('add-stay') }}">
 
             <div class="form-group input-in-add-stay-column">
-                {{ form_row(form.entrydate, {'attr': {'class': 'entrydate-input'}}) }}
+                {{ form_row(form.entrydate, {'attr': {'class': 'entrydate-input', 'id': 'form_entrydate'}}) }}
             </div>
             <div class="form-group input-row">
                 <div class="speciality-container">
                     {{ form_row(form.speciality, {'attr': {'id': 'form_speciality', 'class': 'speciality-selector'}}) }}
                 </div>
-                <button type="button" id="search-speciality" class="search-button">Rechercher</button>
 
             </div>
 
@@ -45,14 +42,13 @@
                 <div class="doctor-container">
                     {{ form_row(form.doctor, {'attr': {'id': 'form_doctor', 'class': 'doctor-selector'}}) }}
                 </div>
-                <button type="button" id="view-availability" class="view-availability-button">Afficher créneaux</button>
 
             </div>
 
-            <!-- Ajouter ce conteneur pour le code JavaScript -->
-            <div id="availability-container" style="display: none;">
+
+            <div id="availability-container">
                 <p>Disponibilités :</p>
-                {{ form_row(form.slot, {'attr': {'class': 'form_slot', 'name': 'slot'}}) }}
+                {{ form_row(form.slot, {'attr': {'class': 'form_slot', 'name': 'slot', 'id': 'form_slot'}}) }}
             </div>
 
             <div id="extend-stay-container" class="form-group question-in-add-stay">

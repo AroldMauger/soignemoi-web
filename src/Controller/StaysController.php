@@ -3,14 +3,21 @@
 namespace App\Controller;
 
 use App\Entity\Doctors;
+use App\Entity\Reasons;
+use App\Entity\Specialities;
+use App\Entity\Slot;
 use App\Entity\Stays;
+use App\Entity\Users;
 use App\Form\StaysType;
 use App\Repository\DoctorsRepository;
-use App\Repository\SlotRepository;
+use App\Repository\ReasonsRepository;
 use App\Repository\SpecialitiesRepository;
-use App\Service\SpecialityService;
+use App\Repository\SlotRepository;
+use App\Repository\UsersRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,63 +25,120 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class StaysController extends AbstractController
 {
-    private $specialityService;
+    private SpecialitiesRepository $specialitiesRepository;
+    private DoctorsRepository $doctorsRepository;
+    private ReasonsRepository $reasonsRepository;
+    private SlotRepository $slotRepository;
+    private UsersRepository $usersRepository;
 
-    public function __construct(SpecialityService $specialityService)
-    {
-        $this->specialityService = $specialityService;
+    public function __construct(
+        SpecialitiesRepository $specialitiesRepository,
+        DoctorsRepository $doctorsRepository,
+        ReasonsRepository $reasonsRepository,
+        SlotRepository $slotRepository,
+        UsersRepository $usersRepository
+    ) {
+        $this->specialitiesRepository = $specialitiesRepository;
+        $this->doctorsRepository = $doctorsRepository;
+        $this->reasonsRepository = $reasonsRepository;
+        $this->slotRepository = $slotRepository;
+        $this->usersRepository = $usersRepository;
     }
 
-    #[Route('/add-stay', name: 'add-stay', methods: ['GET', 'POST'])]
-    public function newStay(Request $request, EntityManagerInterface $entityManager, SpecialitiesRepository $specialitiesRepository): Response
+    #[Route('/create-stay', name: 'create_stay', methods: ['GET'])]
+    public function createStay(): Response
     {
-        $stay = new Stays();
-        $specialities = $specialitiesRepository->findAll();
-        ksort($specialities); // Tri des spécialités par ordre alphabétique
+        $user = $this->getUser();
 
-        // Récupérer la spécialité depuis la requête GET
-        $speciality = $request->query->get('speciality');
-        $doctors = [];
-        $reasons = [];
-
-        // Si une spécialité est sélectionnée, charger les médecins et les raisons
-        if ($speciality) {
-            $doctorRepository = $entityManager->getRepository(Doctors::class);
-            $doctors = $doctorRepository->findBy(['speciality' => $speciality]);
-
-            $reasons = $this->specialityService->getReasonsBySpeciality($speciality);
+        if (!$user) {
+            throw new AccessDeniedException('Vous devez être connecté pour créer un séjour.');
         }
 
-        // Créer le formulaire en passant les spécialités, médecins et raisons
+        return $this->redirectToRoute('add_stay');
+    }
+
+    #[Route('/add-stay', name: 'add_stay', methods: ['GET', 'POST'])]
+    public function new(
+        Request $request,
+        UsersRepository $usersRepository,
+        DoctorsRepository $doctorsRepository,
+        SlotRepository $slotRepository,
+        EntityManagerInterface $entityManager,
+        Security $security  // Ajoutez le service Security
+    ): Response
+    {
+        // Récupération de l'ID utilisateur depuis les paramètres de requête
+        $userId = $request->query->getInt('user_id', 0);
+
+        // Si 'user_id' est passé dans l'URL, nous récupérons l'utilisateur correspondant
+        if ($userId > 0) {
+            $user = $usersRepository->find($userId);
+            if (!$user) {
+                throw new \Exception('Utilisateur non trouvé.');
+            }
+        } else {
+            // Récupération de l'utilisateur courant si aucun user_id n'est spécifié
+            $user = $security->getUser();  // Récupération de l'utilisateur courant depuis le service Security
+            if (!$user) {
+                throw new \Exception('Utilisateur non authentifié.');
+            }
+        }
+
+        $stay = new Stays();
+        $doctorId = $request->query->getInt('doctor_id', 0);  // Récupération du doctor_id en tant qu'entier
+        $date = $request->query->get('date');
+        $slots = [];
+
+        if ($doctorId > 0 && $date) {
+            $doctor = $doctorsRepository->find($doctorId);
+            $dateTime = new \DateTime($date);
+            if ($doctor) {
+                $slots = $slotRepository->findAvailableSlots($doctor, $dateTime);
+            } else {
+                throw new \Exception('Médecin non trouvé.');
+            }
+        }
+
         $form = $this->createForm(StaysType::class, $stay, [
-            'specialities' => $specialities,
-            'reasons' => $reasons,
-            'doctors' => $doctors,
+            'slots' => $slots,
+            'user' => $user,  // Passer l'utilisateur au formulaire
         ]);
 
         $form->handleRequest($request);
 
+        // Assurez-vous que `user_id` n'est pas un champ du formulaire
+        $requestData = $request->request->all();
+        if (isset($requestData['user_id'])) {
+            unset($requestData['user_id']);  // Retirer user_id des données du formulaire
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
+            $slot = $data->getSlot();
+
+            if (!$slot) {
+                throw new \Exception('Le créneau sélectionné est invalide.');
+            }
+
             if ($request->request->get('extend') === 'no') {
                 $data->setLeavingdate($data->getEntrydate());
             }
 
-            $data->setUser($this->getUser()); // Ajoutez cette ligne pour lier l'utilisateur au séjour
-            $data->setStatus('en cours');
+            $data->setUser($user);  // Assurez-vous que l'utilisateur est bien affecté
 
             $entityManager->persist($data);
             $entityManager->flush();
+
             return $this->redirectToRoute('stay_success');
         }
 
         return $this->render('pages/add-stay.html.twig', [
             'form' => $form->createView(),
-            'specialities' => $specialities,
-            'doctors' => $doctors,
-            'reasons' => $reasons,
+            'slots' => $slots,
         ]);
     }
+
+
 
     #[Route('/stay-success', name: 'stay_success')]
     public function staySuccess(): Response
@@ -83,101 +147,56 @@ class StaysController extends AbstractController
     }
 
     #[Route('/stay-search', name: 'stay_search', methods: ['GET'])]
-    public function search(
-        Request $request,
-        EntityManagerInterface $entityManager,
-        SpecialitiesRepository $specialitiesRepository,
-        DoctorsRepository $doctorsRepository,
-    ): Response
+    public function search(Request $request): JsonResponse
     {
         $specialityId = $request->query->get('speciality');
-        $speciality = $specialitiesRepository->findOneBy(['id'=> $specialityId]);
+        $speciality = $specialityId ? $this->specialitiesRepository->find($specialityId) : null;
         $doctors = [];
         $reasons = [];
 
         if ($speciality) {
-            // TODO : changer speciality par l'identifiant de l'objet Specialities.
-            $doctors = $doctorsRepository->findBy(['speciality' => $speciality->getCode()]);
-
-            foreach ($speciality->getReasons()->toArray() as $reason) {
-                $reasons[] = [
-                    'id' => $reason->getId(),
-                    'name' => $reason->getName()
-                ];
-            }
+            $doctors = $this->doctorsRepository->findBy(['speciality' => $speciality]);
+            $reasons = $this->reasonsRepository->findBy(['speciality' => $speciality]);
         }
 
         return $this->json([
-            'doctors' => array_map(function (Doctors $doctor) {
-                return [
-                    'id' => $doctor->getId(),
-                    'firstname' => $doctor->getFirstname(),
-                    'lastname' => $doctor->getLastname(),
-                ];
-            }, $doctors),
-            'reasons' => $reasons,
+            'doctors' => array_map(fn(Doctors $doctor) => [
+                'id' => $doctor->getId(),
+                'firstname' => $doctor->getFirstname(),
+                'lastname' => $doctor->getLastname()
+            ], $doctors),
+            'reasons' => array_map(fn(Reasons $reason) => [
+                'id' => $reason->getId(),
+                'name' => $reason->getName()
+            ], $reasons),
         ]);
     }
 
     #[Route('/get-availability', name: 'get_availability', methods: ['POST'])]
-    public function getAvailability(Request $request, SlotRepository $slotRepository): JsonResponse
+    public function getAvailability(Request $request): JsonResponse
     {
         $doctorId = $request->request->get('doctor_id');
         $date = $request->request->get('date');
 
-        if (!$doctorId || !$date) {
-            return $this->json(['error' => 'Les paramètres doctor_id et date sont requis.'], 400);
+        $doctor = $this->doctorsRepository->find($doctorId);
+        $dateTime = new \DateTime($date);
+
+        if ($doctor) {
+            $startOfDay = (clone $dateTime)->setTime(0, 0, 0);
+            $endOfDay = (clone $dateTime)->setTime(23, 59, 59);
+
+            $slots = $this->slotRepository->findAvailableSlots($doctor, $startOfDay, $endOfDay);
+            $slotData = array_map(fn($slot) => [
+                'id' => $slot->getId(),
+                'starttime' => $slot->getStarttime()->format('H:i'),
+                'endtime' => $slot->getEndtime()->format('H:i'),
+            ], $slots);
+
+            return $this->json([
+                'slots' => $slotData,
+            ]);
         }
 
-        try {
-            // Convertir la date reçue en objet DateTime en supprimant les heures si présentes
-            $date = new \DateTime($date . ' 00:00:00');
-        } catch (\Exception $e) {
-            return $this->json(['error' => 'Date invalide.'], 400);
-        }
-
-        $slots = $slotRepository->findAvailableSlots($doctorId, $date);
-
-        $availableSlots = [];
-        foreach ($slots as $slot) {
-            if (!$slot->isBooked()) {
-                $availableSlots[] = [
-                    'id' => $slot->getId(),
-                    'starttime' => $slot->getStarttime()->format('H:i'),
-                    'endtime' => $slot->getEndtime()->format('H:i')
-                ];
-            }
-        }
-
-        if (empty($availableSlots)) {
-            return $this->json(['message' => 'Aucun créneau disponible pour cette date.'], 404);
-        }
-
-        return $this->json(['slots' => $availableSlots]);
-    }
-
-    #[Route('/submit-stay', name: 'submit_stay', methods: ['POST'])]
-    public function submitStay(Request $request, EntityManagerInterface $entityManager): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
-        $stay = new Stays();
-        $form = $this->createForm(StaysType::class, $stay);
-        $form->submit($data);  // Soumettre les données du formulaire
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            if (isset($data['extend']) && $data['extend'] === 'no') {
-                $stay->setLeavingdate($stay->getEntrydate());
-            }
-
-            $stay->setUser($this->getUser());
-            $stay->setStatus('en cours');
-
-            $entityManager->persist($stay);
-            $entityManager->flush();
-
-            return new JsonResponse(['message' => 'Stay successfully created'], Response::HTTP_OK);
-        }
-
-        return new JsonResponse(['error' => 'Invalid data', 'details' => (string) $form->getErrors(true, false)], Response::HTTP_BAD_REQUEST);
+        return $this->json(['error' => 'Invalid doctor or date'], 400);
     }
 }

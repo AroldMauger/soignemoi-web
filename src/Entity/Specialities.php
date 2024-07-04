@@ -12,7 +12,7 @@ class Specialities
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -21,15 +21,16 @@ class Specialities
     #[ORM\Column(length: 255)]
     private ?string $code = null;
 
-    /**
-     * @var Collection<int, Reasons>
-     */
-    #[ORM\OneToMany(targetEntity: Reasons::class, mappedBy: 'speciality', cascade: ["PERSIST"])]
+    #[ORM\OneToMany(targetEntity: Reasons::class, mappedBy: 'speciality', cascade: ['PERSIST'])]
     private Collection $reasons;
+
+    #[ORM\OneToMany(targetEntity: Doctors::class, mappedBy: 'speciality')]
+    private Collection $doctors;
 
     public function __construct()
     {
         $this->reasons = new ArrayCollection();
+        $this->doctors = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -61,9 +62,6 @@ class Specialities
         return $this;
     }
 
-    /**
-     * @return Collection<int, Reasons>
-     */
     public function getReasons(): Collection
     {
         return $this->reasons;
@@ -82,12 +80,42 @@ class Specialities
     public function removeReason(Reasons $reason): static
     {
         if ($this->reasons->removeElement($reason)) {
-            // set the owning side to null (unless already changed)
             if ($reason->getSpeciality() === $this) {
                 $reason->setSpeciality(null);
             }
         }
 
         return $this;
+    }
+
+    public function getDoctors(): Collection
+    {
+        return $this->doctors;
+    }
+
+    public function addDoctor(Doctors $doctor): static
+    {
+        if (!$this->doctors->contains($doctor)) {
+            $this->doctors->add($doctor);
+            $doctor->setSpeciality($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDoctor(Doctors $doctor): static
+    {
+        if ($this->doctors->removeElement($doctor)) {
+            if ($doctor->getSpeciality() === $this) {
+                $doctor->setSpeciality(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->name;
     }
 }
