@@ -8,10 +8,10 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class LoginDTO
 {
     public function __construct(
-        #[Email]
-        public readonly string $email,
         #[NotBlank]
-        public readonly string $password
+        public readonly string $lastname,
+        #[NotBlank]
+        public readonly string $identification
     )
     {
 

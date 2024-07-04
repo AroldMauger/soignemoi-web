@@ -28,7 +28,7 @@ class StaysApiController extends AbstractController
         } else {
             $stays = $repo->findBy(['status' => 'en cours']);
         }
-        $userApiContext ->getUser();
+        $userApiContext ->getDoctors();
 
         return $this ->json($stays);
     }

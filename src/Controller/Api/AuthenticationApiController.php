@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\DTO\LoginDTO;
+use App\Repository\DoctorsRepository;
 use App\Repository\UsersRepository;
 use Firebase\JWT\JWT;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,28 +17,24 @@ class AuthenticationApiController extends AbstractController
 {
     #[Route("/login", methods: ["POST"])]
     public function login(
-        #[MapRequestPayload]
-        LoginDTO $loginDTO,
-        UsersRepository $usersRepository,
-        UserPasswordHasherInterface $userPasswordHasher
-    )
-    {
-        $user = $usersRepository ->findOneBy(["email" => $loginDTO -> email]);
-        if($user) {
-            if($userPasswordHasher ->isPasswordValid($user, $loginDTO -> password)){
+        #[MapRequestPayload] LoginDTO $loginDTO,
+        DoctorsRepository $doctorsRepository
+    ) {
+        $doctor = $doctorsRepository->findOneBy(["lastname" => $loginDTO->lastname]);
+
+        if ($doctor) {
+            if ($doctor->getIdentification() === $loginDTO->identification) {
                 $key = 'example_key';
                 $payload = [
                     'iat' => time(),
-                    'exp' => time() + 3600*24,
-                    'userId' => $user ->getId()
+                    'exp' => time() + 3600 * 24,
+                    'userId' => $doctor->getId()
                 ];
                 $jwt = JWT::encode($payload, $key, "HS256");
-                return $this -> json(["token" => $jwt]);
-
+                return $this->json(["token" => $jwt]);
             }
-            return $this ->json(["error" => "Bad credentials"], Response::HTTP_NOT_FOUND);
+            return $this->json(["error" => "Bad credentials"], Response::HTTP_NOT_FOUND);
         }
-        return $this ->json(["error" => "Bad credentials"], Response::HTTP_NOT_FOUND);
+        return $this->json(["error" => "Bad credentials"], Response::HTTP_NOT_FOUND);
     }
-
 }

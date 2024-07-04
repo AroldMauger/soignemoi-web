@@ -2,20 +2,20 @@
 
 namespace App\Context;
 
-use App\Entity\Users;
+use App\Entity\Doctors;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class UserApiContext
 {
-    private ? Users $user = null;
+    private ? Doctors $doctor = null;
 
-    public function setUser(Users $user){
-        $this ->user = $user;
+    public function setDoctors(Doctors $doctor){
+        $this ->doctor = $doctor;
     }
-    public function getUser(){
-        if($this -> user == null){
+    public function getDoctors(){
+        if($this -> doctor == null){
             throw new UnauthorizedHttpException("Missing token");
         }
-        return $this -> user;
+        return $this -> doctor;
     }
 }
