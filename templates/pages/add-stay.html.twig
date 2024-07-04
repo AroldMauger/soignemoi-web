@@ -27,9 +27,11 @@
 
             <div class="form-group input-in-add-stay-column">
                 {{ form_row(form.entrydate, {'attr': {'class': 'entrydate-input', 'id': 'form_entrydate'}}) }}
+                <button type="button" id="search_button" class="btn btn-primary">Rechercher</button>
+
             </div>
             <div class="form-group input-row">
-                <div class="speciality-container">
+                <div class="speciality-container" style="display: none;">
                     {{ form_row(form.speciality, {'attr': {'id': 'form_speciality', 'class': 'speciality-selector'}}) }}
                 </div>
 
@@ -51,15 +53,15 @@
                 {{ form_row(form.slot, {'attr': {'class': 'form_slot', 'name': 'slot', 'id': 'form_slot'}}) }}
             </div>
 
-            <div id="extend-stay-container" class="form-group question-in-add-stay">
-                <p>Souhaitez-vous prolonger votre séjour à l'hôpital ?</p>
-                <input type="radio" id="extend-yes" name="extend" value="yes"> Oui
-                <input type="radio" id="extend-no" name="extend" value="no" checked> Non
+            <div class="form-group question-in-add-stay">
+                {{ form_row(form.extendStay) }}
             </div>
 
-            <div id="leaving-date-group" class="form-group input-in-add-stay-column" style="display: none;">
-                {{ form_row(form.leavingdate) }}
-            </div>
+            {% if form.vars.value.isEqualDates == false %}
+                <div id="leaving-date-group" class="form-group input-in-add-stay-column">
+                    {{ form_row(form.leavingdate) }}
+                </div>
+            {% endif %}
 
             <button type="submit" id="book-appointment">Réserver le séjour</button>
 

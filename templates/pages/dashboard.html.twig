@@ -30,7 +30,11 @@
         <div class="card-container in-progress-card">
             <div class="card-subcontainer">
                 <p class="date-in-card">Entrée : {{ stay.entrydate|date('H\\hi') }}  ({{ stay.entrydate|date('d/m/Y') }})</p>
-                <p class="date-in-card">Sortie : {{ stay.leavingdate|date('H\\hi') }}  ({{ stay.leavingdate|date('d/m/Y') }})</p>
+                {% if stay.entrydate == stay.leavingdate %}
+                    <p class="date-in-card">Sortie : {{ stay.leavingdate|date('d/m/Y') }}</p>
+                {% else %}
+                    <p class="date-in-card">Sortie : {{ stay.leavingdate|date('H\\hi') }}  ({{ stay.leavingdate|date('d/m/Y') }})</p>
+                {% endif %}
             </div>
             <div class="card-subcontainer">
                 <p class="date-in-card">{{ stay.reason }}</p>
@@ -52,7 +56,11 @@
         <div class="card-container futur-stay-card">
             <div class="card-subcontainer">
                 <p class="date-in-card">Entrée : {{ stay.entrydate|date('H\\hi') }}  ({{ stay.entrydate|date('d/m/Y') }})</p>
-                <p class="date-in-card">Sortie : {{ stay.leavingdate|date('H\\hi') }}  ({{ stay.leavingdate|date('d/m/Y') }})</p>
+                {% if stay.entrydate == stay.leavingdate %}
+                    <p class="date-in-card">Sortie : {{ stay.leavingdate|date('d/m/Y') }}</p>
+                {% else %}
+                    <p class="date-in-card">Sortie : {{ stay.leavingdate|date('H\\hi') }}  ({{ stay.leavingdate|date('d/m/Y') }})</p>
+                {% endif %}
             </div>
             <div class="card-subcontainer">
                 <p class="date-in-card">{{ stay.reason }}</p>
@@ -63,7 +71,6 @@
         <p>Aucun rendez-vous à venir.</p>
     {% endfor %}
 </section>
-
 
 </body>
 </html>

@@ -223,5 +223,19 @@ class Stays
 
         return $this;
     }
+    private $isEqualDates;
 
+    // ... autres méthodes
+
+    public function getIsEqualDates(): ?bool
+    {
+        return $this->isEqualDates;
+    }
+
+    public function setIsEqualDates(?bool $isEqualDates): self
+    {
+        $this->isEqualDates = $isEqualDates;
+
+        return $this;
+    }
 }

@@ -98,6 +98,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!starttime || !endtime) {
                 valid = false;
                 errorMessages.push('Tous les créneaux doivent être complétés.');
+            } else if (starttime >= endtime) {
+                valid = false;
+                errorMessages.push('L\'heure de début doit être inférieure à l\'heure de fin pour chaque créneau.');
             } else {
                 slots.push({ starttime, endtime });
             }
@@ -140,4 +143,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Fonction pour obtenir la date d'aujourd'hui au format YYYY-MM-DD
+    const getTodayDate = () => {
+        const today = new Date();
+        const day = String(today.getDate()).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const year = today.getFullYear();
+        return `${year}-${month}-${day}`;
+    };
+
+    const today = getTodayDate();
+
+    // Définir l'attribut min pour empêcher la sélection de dates passées
+    planningDateInput.setAttribute('min', today);
+
+    // Ajouter un écouteur d'événement pour l'entrée de la date
+    planningDateInput.addEventListener('change', function() {
+        const selectedDate = planningDateInput.value;
+        if (new Date(selectedDate) < new Date(today)) {
+            alert("La date sélectionnée ne peut pas être antérieure à la date du jour.");
+            planningDateInput.value = today;
+        }
+    });
 });

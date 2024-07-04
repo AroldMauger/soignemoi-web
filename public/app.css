@@ -1116,3 +1116,10 @@ label {
     gap:10px;
 }
 
+.reason-container,
+.doctor-container,
+#availability-container,
+.question-in-add-stay,
+#leaving-date-group {
+    display: none;
+}

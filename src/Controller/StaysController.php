@@ -57,6 +57,7 @@ class StaysController extends AbstractController
         return $this->redirectToRoute('add_stay');
     }
 
+    // src/Controller/YourController.php
     #[Route('/add-stay', name: 'add_stay', methods: ['GET', 'POST'])]
     public function new(
         Request $request,
@@ -64,53 +65,32 @@ class StaysController extends AbstractController
         DoctorsRepository $doctorsRepository,
         SlotRepository $slotRepository,
         EntityManagerInterface $entityManager,
-        Security $security  // Ajoutez le service Security
+        Security $security
     ): Response
     {
-        // Récupération de l'ID utilisateur depuis les paramètres de requête
         $userId = $request->query->getInt('user_id', 0);
 
-        // Si 'user_id' est passé dans l'URL, nous récupérons l'utilisateur correspondant
         if ($userId > 0) {
             $user = $usersRepository->find($userId);
             if (!$user) {
                 throw new \Exception('Utilisateur non trouvé.');
             }
         } else {
-            // Récupération de l'utilisateur courant si aucun user_id n'est spécifié
-            $user = $security->getUser();  // Récupération de l'utilisateur courant depuis le service Security
+            $user = $security->getUser();
             if (!$user) {
                 throw new \Exception('Utilisateur non authentifié.');
             }
         }
 
         $stay = new Stays();
-        $doctorId = $request->query->getInt('doctor_id', 0);  // Récupération du doctor_id en tant qu'entier
-        $date = $request->query->get('date');
-        $slots = [];
-
-        if ($doctorId > 0 && $date) {
-            $doctor = $doctorsRepository->find($doctorId);
-            $dateTime = new \DateTime($date);
-            if ($doctor) {
-                $slots = $slotRepository->findAvailableSlots($doctor, $dateTime);
-            } else {
-                throw new \Exception('Médecin non trouvé.');
-            }
-        }
+        $slots = [];  // On ne définit pas ici les slots disponibles
 
         $form = $this->createForm(StaysType::class, $stay, [
-            'slots' => $slots,
-            'user' => $user,  // Passer l'utilisateur au formulaire
+            'user' => $user,
+            'slots' => $slots,  // Passer les slots (vide par défaut)
         ]);
 
         $form->handleRequest($request);
-
-        // Assurez-vous que `user_id` n'est pas un champ du formulaire
-        $requestData = $request->request->all();
-        if (isset($requestData['user_id'])) {
-            unset($requestData['user_id']);  // Retirer user_id des données du formulaire
-        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
@@ -124,11 +104,11 @@ class StaysController extends AbstractController
                 $data->setLeavingdate($data->getEntrydate());
             }
 
-            $data->setUser($user);  // Assurez-vous que l'utilisateur est bien affecté
-            $slot->setIsBooked(true); // Met à jour la valeur de isbooked
+            $data->setUser($user);
+            $slot->setIsBooked(true);
 
             $entityManager->persist($data);
-            $entityManager->persist($slot); // Persiste l'entité Slot avec la nouvelle valeur
+            $entityManager->persist($slot);
             $entityManager->flush();
 
             return $this->redirectToRoute('stay_success');
@@ -136,9 +116,9 @@ class StaysController extends AbstractController
 
         return $this->render('pages/add-stay.html.twig', [
             'form' => $form->createView(),
-            'slots' => $slots,
         ]);
     }
+
 
 
 

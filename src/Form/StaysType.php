@@ -7,8 +7,8 @@ use App\Entity\Specialities;
 use App\Entity\Stays;
 use App\Entity\Doctors;
 use App\Entity\Slot;
-use App\Entity\Users;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -59,19 +59,51 @@ class StaysType extends AbstractType
             ])
             ->add('slot', EntityType::class, [
                 'class' => Slot::class,
+                'choice_label' => function (Slot $slot) {
+                    return $slot->getStarttime()->format('H:i') . ' - ' . $slot->getEndtime()->format('H:i');
+                },
                 'choice_value' => 'id',
                 'expanded' => false,
                 'multiple' => false,
                 'required' => true,
+                'attr' => ['class' => 'slot-selector'],
+                'placeholder' => 'Choisissez un créneau',  // Placeholder pour le champ vide par défaut
             ])
             ->add('status', HiddenType::class, [
                 'data' => 'en cours',
             ])
             ->add('user', HiddenType::class, [
-                'data' => $options['user']->getId(),  // Assigner l'ID de l'utilisateur
-                'mapped' => false,  // Assurer que ce champ n'est pas lié à une propriété de l'entité
+                'data' => $options['user']->getId(),
+                'mapped' => false,
+            ])
+            ->add('extendStay', ChoiceType::class, [
+                'choices' => [
+                    'Oui' => 'yes',
+                    'Non' => 'no',
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'mapped' => false,
+                'label' => 'Souhaitez-vous prolonger votre séjour à l\'hôpital ?',
+                'data' => 'no' // Définir la valeur par défaut à "Non"
+            ])
+            ->add('isEqualDates', HiddenType::class, [
+                'mapped' => false,
             ]);
-        ;
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            $data = $event->getData();
+            $form = $event->getForm();
+
+            if (isset($data['extendStay']) && $data['extendStay'] === 'no' && isset($data['entrydate'])) {
+                $data['leavingdate'] = $data['entrydate'];
+                $data['isEqualDates'] = true;
+                $event->setData($data);
+            } else {
+                $data['isEqualDates'] = false;
+                $event->setData($data);
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -79,8 +111,7 @@ class StaysType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Stays::class,
             'slots' => [],
-            'user' => null,  // Ajouter une option pour l'utilisateur
-
+            'user' => null,
         ]);
     }
 }
