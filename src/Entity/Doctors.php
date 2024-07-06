@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: DoctorsRepository::class)]
 class Doctors implements UserInterface, PasswordAuthenticatedUserInterface
@@ -250,8 +251,6 @@ class Doctors implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return ['ROLE_DOCTOR'];  // Ajoute un rôle par défaut pour les doctors
     }
-
-
 
     public function getSalt(): ?string
     {

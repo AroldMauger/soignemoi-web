@@ -1,8 +1,6 @@
 <?php
 // src/Repository/StaysRepository.php
 
-// src/Repository/StaysRepository.php
-
 namespace App\Repository;
 
 use App\Entity\Stays;
@@ -22,8 +20,6 @@ class StaysRepository extends ServiceEntityRepository
     {
         $now = new DateTime();
         return $this->createQueryBuilder('s')
-            ->leftJoin('s.doctor', 'd')
-            ->addSelect('d')
             ->leftJoin('s.slot', 'sl') // Jointure avec l'entité Slot
             ->addSelect('sl')
             ->where('s.entrydate <= :now')
@@ -35,13 +31,23 @@ class StaysRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+
+    public function findByDoctorLastName(string $lastname): array
+    {
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.doctor', 'd') // Jointure avec l'entité Doctor
+            ->addSelect('d')
+            ->where('d.lastname = :lastname')
+            ->setParameter('lastname', $lastname)
+            ->getQuery()
+            ->getResult();
+    }
+
     // Méthode pour récupérer les séjours à venir
     public function findUpcomingStays(): array
     {
         $now = new DateTime();
         return $this->createQueryBuilder('s')
-            ->leftJoin('s.doctor', 'd')
-            ->addSelect('d')
             ->leftJoin('s.slot', 'sl') // Jointure avec l'entité Slot
             ->addSelect('sl')
             ->where('s.entrydate > :now')
@@ -56,6 +62,7 @@ class StaysRepository extends ServiceEntityRepository
     public function updateStayStatuses(): void
     {
         $now = new DateTime();
+
         $this->createQueryBuilder('s')
             ->update()
             ->set('s.status', ':status')
@@ -88,7 +95,6 @@ class StaysRepository extends ServiceEntityRepository
     public function findFinishedPaginated(int $page, int $limit): array
     {
         return $this->createQueryBuilder('a')
-            ->select('a')
             ->leftJoin('a.slot', 'sl') // Jointure avec l'entité Slot
             ->addSelect('sl')
             ->where('a.status = :status')

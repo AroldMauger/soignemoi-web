@@ -3,54 +3,77 @@
 namespace App\Controller\Api;
 
 use App\Context\DoctorApiContext;
-use App\Entity\Appointments;
 use App\Entity\Stays;
-use App\Repository\AppointmentsRepository;
 use App\Repository\StaysRepository;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route("/api/stays")]
+#[Route("")]
 class StaysApiController extends AbstractController
 {
-    #[Route("", methods: ["GET"])]
-    public function getStays(DoctorApiContext $userApiContext, StaysRepository $repo, Request $request, TokenStorageInterface $tokenStorage): Response
+    #[Route('/api/stays', name: 'api_stays', methods: ['GET'])]
+    public function index(StaysRepository $staysRepository): JsonResponse
     {
-        try {
-            $token = $tokenStorage->getToken();
-            if (!$token) {
-                throw new AuthenticationException('Token not found');
-            }
+        $stays = $staysRepository->findAll();
 
-            $user = $token->getUser();
-            // Vérifiez les autorisations de l'utilisateur ici
-            // ...
+        // Convert entities to arrays
+        $staysArray = array_map([$this, 'transformStayToArray'], $stays);
 
-            $selectedDate = $request->query->get('selected-date');
-            if ($selectedDate) {
-                try {
-                    $date = new DateTime($selectedDate);
-                    $stays = $repo->findCurrentStays();
-                } catch (\Exception $e) {
-                    return $this->json(['error' => 'Invalid date format'], Response::HTTP_BAD_REQUEST);
-                }
-            } else {
-                $stays = $repo->findCurrentStays();
-            }
-
-            $userApiContext->getDoctors();
-
-            return $this->json($stays, Response::HTTP_OK, [], ['groups' => 'stays']);
-        } catch (AuthenticationException $e) {
-            return new Response($e->getMessage(), Response::HTTP_UNAUTHORIZED);
-        }
+        return new JsonResponse($staysArray, JsonResponse::HTTP_OK);
     }
+
+    private function transformStayToArray(Stays $stay): array
+    {
+        return [
+            'id' => $stay->getId(),
+            'entrydate' => $stay->getEntrydate()->format('Y-m-d\TH:i:sP'),
+            'leavingdate' => $stay->getLeavingdate()->format('Y-m-d\TH:i:sP'),
+            'speciality' => $stay->getSpeciality() ? [
+                'id' => $stay->getSpeciality()->getId(),
+                'name' => $stay->getSpeciality()->getName(),
+                'code' => $stay->getSpeciality()->getCode()
+            ] : null,
+            'reason' => $stay->getReason() ? [
+                'id' => $stay->getReason()->getId(),
+                'name' => $stay->getReason()->getName()
+            ] : null,
+            'doctor' => $stay->getDoctor() ? [
+                'id' => $stay->getDoctor()->getId(),
+                'name' => $stay->getDoctor()->getLastname()
+            ] : null,
+            'slot' => $stay->getSlot() ? [
+                'id' => $stay->getSlot()->getId(),
+                'time' => $stay->getSlot()->getStarttime()
+            ] : null,
+            'user' => $stay->getUser() ? [
+                'id' => $stay->getUser()->getId(),
+                'username' => $stay->getUser()->getFirstname()
+            ] : null,
+            'status' => $stay->getStatus(),
+            'opinions' => $stay->getOpinions()->map(function($opinion) {
+                return [
+                    'id' => $opinion->getId(),
+                    'comment' => $opinion->getComment()
+                ];
+            })->toArray(),
+            'prescriptions' => $stay->getPrescriptions()->map(function($prescription) {
+                return [
+                    'id' => $prescription->getId(),
+                    'medicine' => $prescription->getMedicine()
+                ];
+            })->toArray()
+        ];
+    }
+
+
 
     #[Route('/history', name:"api.history", methods: ['GET'])]
     public function history(StaysRepository $repo,
@@ -66,7 +89,7 @@ class StaysApiController extends AbstractController
         $nextPage = ($page+1 == $totalPages || $page>$totalPages) ? null:$page+1;
         $firstPage = $page == 0? null: 0;
         $lastPage = $totalPages - 1;
-        return $this->json(["appointments" => $stays, "firstPage" => $firstPage, "lastPage" => $lastPage, "previousPage" => $previousPage, "nextPage" => $nextPage]);
+        return $this->json(["stays" => $stays, "firstPage" => $firstPage, "lastPage" => $lastPage, "previousPage" => $previousPage, "nextPage" => $nextPage]);
     }
 
     #[Route('/{id}', name:"api.finish", methods: ['PATCH'])]

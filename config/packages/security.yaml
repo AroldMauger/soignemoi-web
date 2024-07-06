@@ -44,4 +44,3 @@ security:
         - { path: ^/dashboard, roles: ROLE_USER }
         - { path: ^/admin-dashboard, roles: ROLE_ADMIN }
         - { path: ^/api/auth/logindoctor, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

@@ -4,40 +4,26 @@ namespace App\Entity;
 
 use App\Repository\ReasonsRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ReasonsRepository::class)]
 class Reasons
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
-
-    #[ORM\ManyToOne(targetEntity: Specialities::class, inversedBy: 'reasons')]
-    #[ORM\JoinColumn(name: 'speciality_id', referencedColumnName: 'id', nullable: false)]
-    private ?Specialities $speciality = null;
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $code = null;
+    #[ORM\ManyToOne(targetEntity: Specialities::class, inversedBy: 'reasons')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Specialities $speciality = null;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getSpeciality(): ?Specialities
-    {
-        return $this->speciality;
-    }
-
-    public function setSpeciality(?Specialities $speciality): static
-    {
-        $this->speciality = $speciality;
-
-        return $this;
     }
 
     public function getName(): ?string
@@ -52,19 +38,15 @@ class Reasons
         return $this;
     }
 
-    public function getCode(): ?string
+    public function getSpeciality(): ?Specialities
     {
-        return $this->code;
+        return $this->speciality;
     }
 
-    public function setCode(string $code): static
+    public function setSpeciality(?Specialities $speciality): static
     {
-        $this->code = $code;
+        $this->speciality = $speciality;
 
         return $this;
-    }
-    public function __toString(): string
-    {
-        return $this->name;  // Assurez-vous que 'name' est un champ de l'entité Reasons
     }
 }
