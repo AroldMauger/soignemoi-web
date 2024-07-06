@@ -2,7 +2,7 @@
 
 namespace App\Controller\Api;
 
-use App\Context\UserApiContext;
+use App\Context\DoctorApiContext;
 use App\Entity\Appointments;
 use App\Entity\Stays;
 use App\Repository\AppointmentsRepository;
@@ -13,24 +13,43 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 #[Route("/api/stays")]
 class StaysApiController extends AbstractController
 {
     #[Route("", methods: ["GET"])]
-    public function getStays(UserApiContext $userApiContext, StaysRepository $repo, Request $request)
+    public function getStays(DoctorApiContext $userApiContext, StaysRepository $repo, Request $request, TokenStorageInterface $tokenStorage): Response
     {
-        $selectedDate = $request->request->get('selected-date');
+        try {
+            $token = $tokenStorage->getToken();
+            if (!$token) {
+                throw new AuthenticationException('Token not found');
+            }
 
-        if ($selectedDate) {
-            $date = new DateTime($selectedDate);
-            $stays = $repo->findByDate($date, "en cours");
-        } else {
-            $stays = $repo->findBy(['status' => 'en cours']);
+            $user = $token->getUser();
+            // Vérifiez les autorisations de l'utilisateur ici
+            // ...
+
+            $selectedDate = $request->query->get('selected-date');
+            if ($selectedDate) {
+                try {
+                    $date = new DateTime($selectedDate);
+                    $stays = $repo->findCurrentStays();
+                } catch (\Exception $e) {
+                    return $this->json(['error' => 'Invalid date format'], Response::HTTP_BAD_REQUEST);
+                }
+            } else {
+                $stays = $repo->findCurrentStays();
+            }
+
+            $userApiContext->getDoctors();
+
+            return $this->json($stays, Response::HTTP_OK, [], ['groups' => 'stays']);
+        } catch (AuthenticationException $e) {
+            return new Response($e->getMessage(), Response::HTTP_UNAUTHORIZED);
         }
-        $userApiContext ->getDoctors();
-
-        return $this ->json($stays);
     }
 
     #[Route('/history', name:"api.history", methods: ['GET'])]

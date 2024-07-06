@@ -29,4 +29,7 @@ stay_success:
     path: /stay-success
     controller: App\Controller\StaysController::staySuccess
 
-
+login_doctor:
+    path: /api/auth/login_doctor
+    controller: App\Controller\Api\AuthenticationApiController::login_doctor
+    methods: [POST]

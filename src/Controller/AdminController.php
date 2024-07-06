@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class AdminController extends AbstractController
@@ -37,18 +38,23 @@ class AdminController extends AbstractController
     }
 
     #[Route('/add-doctor', name: 'doctor_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
         $doctor = new Doctors();
 
         $specialities = $this->specialitiesRepository->findAll();
         $form = $this->createForm(DoctorsType::class, $doctor, [
-         //   'specialities' => $specialities,  // Pass specialities to the form
+            // 'specialities' => $specialities,  // Pass specialities to the form
         ]);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $plainPassword = $doctor->getPassword(); // Get the plain password from the form
+            $hashedPassword = $passwordHasher->hashPassword($doctor, $plainPassword);
+            $doctor->setPassword($hashedPassword);
+
             $entityManager->persist($doctor);
             $entityManager->flush();
 

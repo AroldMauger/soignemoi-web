@@ -1,9 +1,9 @@
-# This file is the entry point to configure your own services.
-# Files in the packages/ subdirectory configure your dependencies.
+# config/services.yaml
 
-# Put parameters here that don't need to change on each machine where the app is deployed
-# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+# Définir des paramètres globaux si nécessaire
+# Exemple : pour définir des secrets, des chemins, etc.
+# secret: '%env(APP_SECRET)%'
 
 services:
     _defaults:
@@ -23,8 +23,22 @@ services:
     Symfony\Component\Security\Core\Security:
         alias: 'security.helper'
 
-    App\Security\LoginAuthenticator:
+    App\Security\DoctorUserProvider:
         arguments:
-            $authorizationChecker: '@security.authorization_checker'
+            $entityManager: '@doctrine.orm.entity_manager'
 
+    App\Security\DoctorAuthenticator:
+        arguments:
+            - '@security.user_password_hasher'  # Assure-toi que c'est le bon service
+            - '@logger'
+            - '@App\Security\DoctorUserProvider'
+            - '@router'
+        tags:
+            - { name: 'security.authenticator' }
+
+    App\Repository\DoctorsRepository:
+
+
+    App\Context\DoctorApiContext:
+        public: true
 

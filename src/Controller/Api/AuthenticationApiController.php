@@ -1,40 +1,71 @@
 <?php
-
 namespace App\Controller\Api;
 
-use App\DTO\LoginDTO;
-use App\Repository\DoctorsRepository;
-use App\Repository\UsersRepository;
-use Firebase\JWT\JWT;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Context\DoctorApiContext;
+use App\Entity\Doctors;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
-#[Route("/api/auth")]
 class AuthenticationApiController extends AbstractController
 {
-    #[Route("/login", methods: ["POST"])]
-    public function login(
-        #[MapRequestPayload] LoginDTO $loginDTO,
-        DoctorsRepository $doctorsRepository
-    ) {
-        $doctor = $doctorsRepository->findOneBy(["lastname" => $loginDTO->lastname]);
+    private DoctorApiContext $doctorApiContext;
+    private TokenStorageInterface $tokenStorage;
+    private LoggerInterface $logger;
+    private CsrfTokenManagerInterface $csrfTokenManager;
 
-        if ($doctor) {
-            if ($doctor->getIdentification() === $loginDTO->identification) {
-                $key = 'example_key';
-                $payload = [
-                    'iat' => time(),
-                    'exp' => time() + 3600 * 24,
-                    'userId' => $doctor->getId()
-                ];
-                $jwt = JWT::encode($payload, $key, "HS256");
-                return $this->json(["token" => $jwt]);
-            }
-            return $this->json(["error" => "Bad credentials"], Response::HTTP_NOT_FOUND);
+    public function getFirewallName(): string
+    {
+        return 'doctor';
+    }
+
+    public function __construct(DoctorApiContext $doctorApiContext, TokenStorageInterface $tokenStorage, LoggerInterface $logger, CsrfTokenManagerInterface $csrfTokenManager)
+    {
+        $this->doctorApiContext = $doctorApiContext;
+        $this->tokenStorage = $tokenStorage;
+        $this->logger = $logger;
+        $this->csrfTokenManager = $csrfTokenManager;
+    }
+
+    #[Route('/api/auth/login_doctor', name: 'login_doctor', methods: ['POST'])]
+    public function login_doctor(Request $request, JWTTokenManagerInterface $jwtTokenManager): Response
+    {
+        // Ajoutez ce log pour voir le contenu brut de la requête
+        $this->logger->info('Raw request content', ['content' => $request->getContent()]);
+
+        $lastname = $request->request->get('lastname');
+        $identification = $request->request->get('identification');
+
+        // Ajoutez ce log pour voir les valeurs extraites
+        $this->logger->info('Received credentials', [
+            'lastname' => $lastname,
+            'identification' => $identification,
+        ]);
+
+        if (!$lastname || !$identification) {
+            throw new UnauthorizedHttpException('Authentication required');
         }
-        return $this->json(["error" => "Bad credentials"], Response::HTTP_NOT_FOUND);
+
+        $doctor = $this->tokenStorage->getToken()->getUser();
+        if ($doctor instanceof Doctors) {
+            $this->doctorApiContext->setDoctors($doctor);
+
+            $csrfToken = $this->csrfTokenManager->getToken('authenticate');
+            $csrfTokenValue = $csrfToken->getValue();
+
+            // Generate a JWT token
+            $token = $jwtTokenManager->create($doctor, ['roles' => $doctor->getRoles()]);
+            // Return the CSRF token and JWT token in the response
+            return new JsonResponse(['status' => 'success', 'csrf_token' => $csrfTokenValue, 'token' => $token,]);
+        }
+
+        throw new UnauthorizedHttpException('Authentication required');
     }
 }

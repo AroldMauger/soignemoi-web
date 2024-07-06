@@ -6,9 +6,11 @@ use App\Repository\DoctorsRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: DoctorsRepository::class)]
-class Doctors
+class Doctors implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -229,5 +231,41 @@ class Doctors
         }
 
         return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->identification; // Ou toute autre propriété que vous utilisez pour stocker le mot de passe
+    }
+
+    // Ajoutez un setter pour la propriété identification si ce n'est pas déjà fait
+    public function setPassword(string $password): self
+    {
+        $this->identification = $password;
+
+        return $this;
+    }
+
+    public function getRoles(): array
+    {
+        return ['ROLE_DOCTOR'];  // Ajoute un rôle par défaut pour les doctors
+    }
+
+
+
+    public function getSalt(): ?string
+    {
+        // Si tu n’utilises pas un encodage spécifique, retourne null
+        return null;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->lastname;  // Le champ utilisé pour l'identifiant de l'utilisateur
+    }
+
+    public function eraseCredentials():void
+    {
+        // Optionnel : efface les informations sensibles, ici rien à faire
     }
 }
