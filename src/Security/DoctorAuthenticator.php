@@ -77,8 +77,13 @@ class DoctorAuthenticator extends AbstractLoginFormAuthenticator
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         if ($firewallName === 'doctor') {
+            $doctor = $token->getUser();
+            $doctorName = $doctor->getLastname(); // Récupération du nom du docteur
+
+            // Stockage du nom du docteur dans une variable globale ou session
+            $request->getSession()->set('doctorName', $doctorName);
+
             $this->logger->info('Doctor authentication success for user ' . $token->getUserIdentifier());
-            // Vous pouvez ajouter du code supplémentaire spécifique pour les docteurs ici
         } else {
             $this->logger->info('Authentication success for user ' . $token->getUserIdentifier());
         }

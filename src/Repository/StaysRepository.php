@@ -32,13 +32,22 @@ class StaysRepository extends ServiceEntityRepository
     }
 
 
-    public function findByDoctorLastName(string $lastname): array
+    public function findByDoctorLastName(string $lastName): array
     {
         return $this->createQueryBuilder('s')
-            ->leftJoin('s.doctor', 'd') // Jointure avec l'entité Doctor
-            ->addSelect('d')
-            ->where('d.lastname = :lastname')
-            ->setParameter('lastname', $lastname)
+            ->leftJoin('s.doctor', 'd')
+            ->andWhere('d.lastname = :lastname')
+            ->setParameter('lastname', $lastName)
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    public function findByDoctorId($doctorId)
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.doctor = :doctorId')
+            ->setParameter('doctorId', $doctorId)
             ->getQuery()
             ->getResult();
     }

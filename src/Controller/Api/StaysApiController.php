@@ -7,6 +7,7 @@ use App\Entity\Stays;
 use App\Repository\StaysRepository;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,13 +17,19 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route("")]
+#[Route("/api/stays", name: 'api_stays')]
 class StaysApiController extends AbstractController
 {
-    #[Route('/api/stays', name: 'api_stays', methods: ['GET'])]
-    public function index(StaysRepository $staysRepository): JsonResponse
-    {
-        $stays = $staysRepository->findAll();
+    #[Route('', methods: ['GET'])]
+    public function index(
+        Request $request,
+        StaysRepository $staysRepository
+    ): JsonResponse {
+        $doctorLastName = $request->query->get('doctorLastName');
+
+        $stays = $doctorLastName
+            ? $staysRepository->findByDoctorLastName($doctorLastName)
+            : $staysRepository->findAll();
 
         // Convert entities to arrays
         $staysArray = array_map([$this, 'transformStayToArray'], $stays);
@@ -72,7 +79,6 @@ class StaysApiController extends AbstractController
             })->toArray()
         ];
     }
-
 
 
     #[Route('/history', name:"api.history", methods: ['GET'])]
