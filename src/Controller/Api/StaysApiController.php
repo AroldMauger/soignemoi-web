@@ -69,7 +69,7 @@ class StaysApiController extends AbstractController
             'opinions' => $stay->getOpinions()->map(function($opinion) {
                 return [
                     'id' => $opinion->getId(),
-                    'comment' => $opinion->getComment()
+                    'comment' => $opinion->getDescription()
                 ];
             })->toArray(),
             'prescriptions' => $stay->getPrescriptions()->map(function($prescription) {

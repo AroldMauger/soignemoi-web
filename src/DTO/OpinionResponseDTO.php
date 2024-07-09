@@ -4,11 +4,11 @@ namespace App\DTO;
 
 class OpinionResponseDTO
 {
-    public int $id;
-    public int $doctorId;
-    public int $stayId;
-    public string $date;
-    public string $description;
+    private int $id;
+    private int $doctorId;
+    private int $stayId;
+    private string $date;
+    private string $description;
 
     public function __construct(int $id, int $doctorId, int $stayId, string $date, string $description)
     {
@@ -17,5 +17,30 @@ class OpinionResponseDTO
         $this->stayId = $stayId;
         $this->date = $date;
         $this->description = $description;
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getDoctorId(): int
+    {
+        return $this->doctorId;
+    }
+
+    public function getStayId(): int
+    {
+        return $this->stayId;
+    }
+
+    public function getDate(): string
+    {
+        return $this->date;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
     }
 }

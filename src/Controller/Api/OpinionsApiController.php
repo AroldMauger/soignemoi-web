@@ -93,4 +93,29 @@ class OpinionsApiController extends AbstractController
 
         return $this->json($responseDTO, Response::HTTP_CREATED);
     }
+
+    #[Route('/', name: "api.get_opinions_by_stay", methods: ["GET"])]
+    public function getOpinionsByStay(Request $request, OpinionsRepository $opinionsRepository): Response
+    {
+        $stayId = $request->query->get('stayId');
+
+        if (is_null($stayId)) {
+            return $this->json(['error' => 'stayId parameter is required'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $opinions = $opinionsRepository->findBy(['stay' => $stayId]);
+
+        $response = [];
+        foreach ($opinions as $opinion) {
+            $response[] = [
+                'id' => $opinion->getId(),
+                'doctorId' => $opinion->getDoctor()->getId(),
+                'stayId' => $opinion->getStay()->getId(),
+                'date' => $opinion->getDate()->format('Y-m-d H:i:s'),
+                'description' => $opinion->getDescription(),
+            ];
+        }
+
+        return $this->json($response);
+    }
 }
