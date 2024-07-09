@@ -81,39 +81,4 @@ class StaysApiController extends AbstractController
         ];
     }
 
-
-    #[Route('/history', name:"api.history", methods: ['GET'])]
-    public function history(StaysRepository $repo,
-                            #[MapQueryParameter] int $page = 0,
-                            #[MapQueryParameter(options: ["min_range" => 5, "max_range" => 50])] int $limit = 5
-
-    )
-    {
-        $count = $repo->count(["status" => "terminé"]);
-        $stays = $repo->findFinishedPaginated($page, $limit);
-        $totalPages = (int) ceil($count/$limit);
-        $previousPage = $page == 0? null:$page-1;
-        $nextPage = ($page+1 == $totalPages || $page>$totalPages) ? null:$page+1;
-        $firstPage = $page == 0? null: 0;
-        $lastPage = $totalPages - 1;
-        return $this->json(["stays" => $stays, "firstPage" => $firstPage, "lastPage" => $lastPage, "previousPage" => $previousPage, "nextPage" => $nextPage]);
-    }
-
-    #[Route('/{id}', name:"api.finish", methods: ['PATCH'])]
-    public function finish(#[MapEntity(id:"id")] Stays $stay, StaysRepository $repo)
-    {
-        $stay->setStatus("terminé");
-        $repo->save($stay);
-        return $this->json("", Response::HTTP_NO_CONTENT);
-    }
-
-    #[Route('/{id}', name:"api.delete", methods: ['DELETE'])]
-    public function delete(
-        #[MapEntity(id:"id")] Stays $stay,
-        StaysRepository $repo,
-    )
-    {
-        $repo->delete($stay);
-        return $this->json("", Response::HTTP_NO_CONTENT);
-    }
 }

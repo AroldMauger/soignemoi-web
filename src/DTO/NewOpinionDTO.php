@@ -2,23 +2,38 @@
 
 namespace App\DTO;
 
-use Symfony\Component\Validator\Constraints\NotBlank;
-
 class NewOpinionDTO
 {
-    public function __construct(
-        #[NotBlank]
-        public readonly int $id,
-        #[NotBlank]
-        public readonly int $doctorId,
-        #[NotBlank]
-        public readonly int $stayId,
-        #[NotBlank]
-        public readonly string $date,
-        #[NotBlank]
-        public readonly string $description,
-    )
-    {
+    private int $doctorId;
+    private int $stayId;
+    private string $date;
+    private string $description;
 
+    public function __construct(int $doctorId, int $stayId, string $date, string $description)
+    {
+        $this->doctorId = $doctorId;
+        $this->stayId = $stayId;
+        $this->date = $date;
+        $this->description = $description;
+    }
+
+    public function getDoctorId(): int
+    {
+        return $this->doctorId;
+    }
+
+    public function getStayId(): int
+    {
+        return $this->stayId;
+    }
+
+    public function getDate(): string
+    {
+        return $this->date;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
     }
 }

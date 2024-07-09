@@ -16,42 +16,34 @@ class Doctors implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['doctor:read', 'opinion:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['doctor:read', 'opinion:read'])]
     private ?string $lastname = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['doctor:read', 'opinion:read'])]
     private ?string $firstname = null;
 
     #[ORM\ManyToOne(targetEntity: Specialities::class, inversedBy: 'doctors')]
     #[ORM\JoinColumn(name: 'speciality_id', referencedColumnName: 'id', nullable: false)]
+    #[Groups(['doctor:read'])]
     private ?Specialities $speciality = null;
 
     #[ORM\Column(length: 255)]
     private ?string $identification = null;
 
-    /**
-     * @var Collection<int, Planning>
-     */
     #[ORM\OneToMany(targetEntity: Planning::class, mappedBy: 'doctor')]
     private Collection $plannings;
 
-    /**
-     * @var Collection<int, Stays>
-     */
     #[ORM\OneToMany(targetEntity: Stays::class, mappedBy: 'doctor')]
     private Collection $stays;
 
-    /**
-     * @var Collection<int, Opinions>
-     */
     #[ORM\OneToMany(targetEntity: Opinions::class, mappedBy: 'doctor')]
     private Collection $opinions;
 
-    /**
-     * @var Collection<int, Slot>
-     */
     #[ORM\OneToMany(targetEntity: Slot::class, mappedBy: 'doctor')]
     private Collection $slots;
 
@@ -63,16 +55,13 @@ class Doctors implements UserInterface, PasswordAuthenticatedUserInterface
         $this->slots = new ArrayCollection();
     }
 
-    public function getSlots(): Collection
-    {
-        return $this->slots;
-    }
-
+    #[Groups(['doctor:read'])]
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    #[Groups(['doctor:read'])]
     public function getLastname(): ?string
     {
         return $this->lastname;
@@ -85,6 +74,7 @@ class Doctors implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    #[Groups(['doctor:read'])]
     public function getFirstname(): ?string
     {
         return $this->firstname;
@@ -97,6 +87,7 @@ class Doctors implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    #[Groups(['doctor:read'])]
     public function getSpeciality(): ?Specialities
     {
         return $this->speciality;
@@ -121,9 +112,6 @@ class Doctors implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Planning>
-     */
     public function getPlannings(): Collection
     {
         return $this->plannings;
@@ -151,9 +139,6 @@ class Doctors implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Stays>
-     */
     public function getStays(): Collection
     {
         return $this->stays;
@@ -181,9 +166,6 @@ class Doctors implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Slot>
-     */
     public function getAvailableSlots(): Collection
     {
         $slots = new ArrayCollection();
@@ -199,14 +181,12 @@ class Doctors implements UserInterface, PasswordAuthenticatedUserInterface
         return $slots;
     }
 
+    #[Groups(['doctor:read'])]
     public function getFullname(): string
     {
         return $this->firstname . ' ' . $this->lastname;
     }
 
-    /**
-     * @return Collection<int, Opinions>
-     */
     public function getOpinions(): Collection
     {
         return $this->opinions;
@@ -239,7 +219,6 @@ class Doctors implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->identification; // Ou toute autre propriété que vous utilisez pour stocker le mot de passe
     }
 
-    // Ajoutez un setter pour la propriété identification si ce n'est pas déjà fait
     public function setPassword(string $password): self
     {
         $this->identification = $password;
@@ -254,16 +233,15 @@ class Doctors implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getSalt(): ?string
     {
-        // Si tu n’utilises pas un encodage spécifique, retourne null
         return null;
     }
 
     public function getUserIdentifier(): string
     {
-        return $this->lastname;  // Le champ utilisé pour l'identifiant de l'utilisateur
+        return $this->lastname;
     }
 
-    public function eraseCredentials():void
+    public function eraseCredentials(): void
     {
         // Optionnel : efface les informations sensibles, ici rien à faire
     }

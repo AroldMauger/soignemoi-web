@@ -6,9 +6,6 @@ use App\Entity\Opinions;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<Opinions>
- */
 class OpinionsRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -16,28 +13,10 @@ class OpinionsRepository extends ServiceEntityRepository
         parent::__construct($registry, Opinions::class);
     }
 
-//    /**
-//     * @return Opinions[] Returns an array of Opinions objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('o')
-//            ->andWhere('o.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('o.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Opinions
-//    {
-//        return $this->createQueryBuilder('o')
-//            ->andWhere('o.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function save(Opinions $opinion): void
+    {
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($opinion);
+        $entityManager->flush();
+    }
 }

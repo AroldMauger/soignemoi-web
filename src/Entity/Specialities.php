@@ -14,18 +14,23 @@ class Specialities
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(['speciality:read', 'doctor:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['speciality:read', 'doctor:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['speciality:read', 'doctor:read'])]
     private ?string $code = null;
 
     #[ORM\OneToMany(targetEntity: Reasons::class, mappedBy: 'speciality', cascade: ['PERSIST'])]
+    #[Groups(['speciality:read', 'doctor:read'])]
     private Collection $reasons;
 
     #[ORM\OneToMany(targetEntity: Doctors::class, mappedBy: 'speciality')]
+    #[Groups(['speciality:read', 'doctor:read'])]
     private Collection $doctors;
 
     public function __construct()
