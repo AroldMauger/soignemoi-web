@@ -34,7 +34,7 @@ login_doctor:
     controller: App\Controller\Api\AuthenticationApiController::login_doctor
     methods: [POST]
 
-login_secretary:
-    path: /api/auth/login_secretary
-    controller: App\Controller\Api\SecretaryAuthentificationApiController::login_secretary
-    methods: [ POST ]
+api_login_secretary:
+    path: /api/secretary/login
+    controller: App\Controller\Api\SecretaryAuthentificationApiController::login
+    methods: [POST]

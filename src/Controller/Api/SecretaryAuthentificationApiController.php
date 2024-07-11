@@ -1,67 +1,61 @@
 <?php
 
+// src/Controller/Api/SecretaryAuthentificationApiController.php
+
 namespace App\Controller\Api;
 
-use App\Context\SecretaryApiContext;
 use App\Entity\Secretary;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-use Psr\Log\LoggerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
-use Symfony\Component\Security\Csrf\TokenStorage\TokenStorageInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SecretaryAuthentificationApiController extends AbstractController
 {
-    private SecretaryApiContext $secretaryApiContext;
-    private TokenStorageInterface $tokenStorage;
-    private LoggerInterface $logger;
-    private CsrfTokenManagerInterface $csrfTokenManager;
+    private $entityManager;
+    private $passwordHasher;
 
-    public function __construct(
-        SecretaryApiContext $secretaryApiContext,
-        TokenStorageInterface $tokenStorage,
-        LoggerInterface $logger,
-        CsrfTokenManagerInterface $csrfTokenManager
-    ) {
-        $this->secretaryApiContext = $secretaryApiContext;
-        $this->tokenStorage = $tokenStorage;
-        $this->logger = $logger;
-        $this->csrfTokenManager = $csrfTokenManager;
+    public function __construct(EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher)
+    {
+        $this->entityManager = $entityManager;
+        $this->passwordHasher = $passwordHasher;
     }
 
-    #[Route('/api/auth/login_secretary', name: 'login_secretary', methods: ['POST'])]
-    public function login_secretary(Request $request, JWTTokenManagerInterface $jwtTokenManager): Response
+    #[Route('/api/secretary/login', name: 'api_secretary_login', methods: ['POST'])]
+    public function login(Request $request): Response
     {
-        $this->logger->info('Raw request content', ['content' => $request->getContent()]);
+        // Log the raw content of the request
+        $rawContent = $request->getContent();
+        file_put_contents('php://stderr', print_r($rawContent, true));
 
-        $email = $request->request->get('email');
-        $password = $request->request->get('password');
+        $data = json_decode($rawContent, true);
 
-        $this->logger->info('Received credentials', [
-            'email' => $email,
-            'password' => $password,
-        ]);
-
-        if (!$email || !$password) {
-            throw new UnauthorizedHttpException('Authentication required');
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            // Log JSON decode error
+            file_put_contents('php://stderr', print_r(json_last_error_msg(), true));
+            return new JsonResponse(['message' => 'Invalid JSON'], Response::HTTP_BAD_REQUEST);
         }
 
-        $secretary = $this->tokenStorage->getToken()->getUser();
-        if ($secretary instanceof Secretary) {
-            $this->secretaryApiContext->setSecretary($secretary);
-
-            $csrfToken = $this->csrfTokenManager->getToken('authenticate');
-            $csrfTokenValue = $csrfToken->getValue();
-
-            $token = $jwtTokenManager->create($secretary);
-            return new JsonResponse(['status' => 'success', 'csrf_token' => $csrfTokenValue, 'token' => $token]);
+        if (!isset($data['email']) || !isset($data['password'])) {
+            return new JsonResponse(['message' => 'Email and password are required'], Response::HTTP_BAD_REQUEST);
         }
 
-        throw new UnauthorizedHttpException('Authentication required');
+        $email = $data['email'];
+        $password = $data['password'];
+
+        $secretary = $this->entityManager->getRepository(Secretary::class)->findOneBy(['email' => $email]);
+
+        if (!$secretary) {
+            return new JsonResponse(['message' => 'Invalid credentials'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        if (!$this->passwordHasher->isPasswordValid($secretary, $password)) {
+            return new JsonResponse(['message' => 'Invalid credentials'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        return new JsonResponse(['message' => 'Success'], Response::HTTP_OK);
     }
 }
