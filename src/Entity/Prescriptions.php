@@ -22,7 +22,7 @@ class Prescriptions
     /**
      * @var Collection<int, Medicines>
      */
-    #[ORM\OneToMany(targetEntity: Medicines::class, mappedBy: 'prescrition')]
+    #[ORM\OneToMany(targetEntity: Medicines::class, mappedBy: 'prescrition', cascade: ['PERSIST', 'REMOVE'])]
     private Collection $medicines;
 
     public function __construct()

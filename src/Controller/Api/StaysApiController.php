@@ -7,15 +7,9 @@ use App\Entity\Stays;
 use App\Repository\StaysRepository;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route("/api/stays", name: 'api_stays')]
 class StaysApiController extends AbstractController
@@ -75,10 +69,16 @@ class StaysApiController extends AbstractController
             'prescriptions' => $stay->getPrescriptions()->map(function($prescription) {
                 return [
                     'id' => $prescription->getId(),
-                    'medicine' => $prescription->getMedicine()
+                    'medicines' => $prescription->getMedicines()->map(function($medicine) {
+                        return [
+                            'name' => $medicine->getName(),
+                            'dosage' => $medicine->getDosage(),
+                            'start_date' => $medicine->getStartDate(),
+                            'end_date' => $medicine->getEndDate(),
+                        ];
+                    })->toArray()
                 ];
             })->toArray()
         ];
     }
-
 }

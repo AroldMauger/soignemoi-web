@@ -59,7 +59,7 @@ class Stays
     #[Groups('stays_list')]
     private Collection $opinions;
 
-    #[ORM\OneToMany(targetEntity: Prescriptions::class, mappedBy: 'stay')]
+    #[ORM\OneToMany(targetEntity: Prescriptions::class, mappedBy: 'stay', cascade: ['PERSIST', 'REMOVE'])]
     #[Groups('stays_list')]
     private Collection $prescriptions;
 
