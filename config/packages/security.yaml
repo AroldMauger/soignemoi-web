@@ -5,6 +5,7 @@ security:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
         App\Entity\Users: 'auto'
         App\Entity\Doctors: 'auto'
+        App\Entity\Secretary: 'auto'
 
     providers:
         users_in_memory: { memory: null }
@@ -16,13 +17,22 @@ security:
             entity:
                 class: App\Entity\Doctors
                 property: lastname
-
+        secretary_auth:
+            entity:
+                class: App\Entity\Secretary
+                property: email
     firewalls:
 
         doctor:
             pattern: ^/api/auth
             provider: doctor_auth
             custom_authenticator: App\Security\DoctorAuthenticator
+            stateless: false
+
+        secretary:
+            pattern: ^/api/auth
+            provider: secretary_auth
+            custom_authenticator: App\Security\SecretaryAuthenticator
             stateless: false
 
         main:
@@ -44,3 +54,4 @@ security:
         - { path: ^/dashboard, roles: ROLE_USER }
         - { path: ^/admin-dashboard, roles: ROLE_ADMIN }
         - { path: ^/api/auth/logindoctor, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/auth/loginsecretary, roles: IS_AUTHENTICATED_ANONYMOUSLY }

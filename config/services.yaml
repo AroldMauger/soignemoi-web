@@ -29,16 +29,31 @@ services:
 
     App\Security\DoctorAuthenticator:
         arguments:
-            - '@security.user_password_hasher'  # Assure-toi que c'est le bon service
+            - '@security.user_password_hasher'
             - '@logger'
             - '@App\Security\DoctorUserProvider'
             - '@router'
         tags:
             - { name: 'security.authenticator' }
 
-    App\Repository\DoctorsRepository:
 
+    App\Repository\DoctorsRepository:
 
     App\Context\DoctorApiContext:
         public: true
+
+    App\Security\SecretaryUserProvider:
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - public: true
+
+    App\Security\SecretaryAuthenticator:
+        arguments:
+            - '@security.user_password_hasher'
+            - '@logger'
+            - '@App\Security\SecretaryUserProvider'
+            - '@router'
+            - '@security.csrf.token_manager'
+        tags:
+            - { name: 'security.authenticator' }
 

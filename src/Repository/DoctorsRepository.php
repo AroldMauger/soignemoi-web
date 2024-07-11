@@ -13,5 +13,4 @@ class DoctorsRepository extends ServiceEntityRepository
         parent::__construct($registry, Doctors::class);
     }
 
-    // Ajoute tes propres méthodes de repository ici
 }
