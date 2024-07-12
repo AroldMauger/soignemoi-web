@@ -57,13 +57,16 @@ class StaysApiController extends AbstractController
             'user' => $stay->getUser() ? [
                 'id' => $stay->getUser()->getId(),
                 'firstname' => $stay->getUser()->getFirstname(),
-                'lastname' => $stay->getUser()->getLastname()
+                'lastname' => $stay->getUser()->getLastname(),
+                'address' => $stay->getUser()->getAddress(),
+                'email' => $stay->getUser()->getEmail()
             ] : null,
             'status' => $stay->getStatus(),
             'opinions' => $stay->getOpinions()->map(function($opinion) {
                 return [
                     'id' => $opinion->getId(),
-                    'comment' => $opinion->getDescription()
+                    'comment' => $opinion->getDescription(),
+                    'date' => $opinion->getDate()
                 ];
             })->toArray(),
             'prescriptions' => $stay->getPrescriptions()->map(function($prescription) {
