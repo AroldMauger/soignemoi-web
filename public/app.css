@@ -21,7 +21,7 @@ body {
 }
 .logo_main {
     padding-top: 5px;
-    width: 10%;
+    width: 8%;
 }
 
 .signup_button {
@@ -384,8 +384,18 @@ label {
     color: #fff;
 }
 
+.header-confirmation {
+    display: flex;
+    height: 10%;
+    padding: 5px;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #0083BD;
+    color: #fff;
+}
+
 .logo-dashboard, .logo-form {
-    width: 10%;
+    width: 8%;
 }
 
 .nav-dashboard {
@@ -450,12 +460,14 @@ label {
 }
 
 .card-container {
+    background-color: white;
     display: inline-flex;
     flex-direction: row;
     gap: 3rem;
     padding: 20px;
     border-radius: 22px;
     width: auto;
+    margin:20px;
 }
 
 .card-subcontainer {
@@ -504,6 +516,10 @@ label {
 
 
 /* ADD_A_STAY_FORM.HTML */
+
+#search_button {
+   display:  none;
+}
 
 .date-stay_form {
     display: flex;
@@ -572,7 +588,7 @@ label {
     display: flex;
     flex-direction: row;
     gap:20px;
-    width: 60%;
+    width: 40%;
     align-items: center;
     color: #9CF89E;
 }
@@ -663,6 +679,17 @@ label {
     border: none;
     background: none;
     border-radius: 50%;
+}
+
+.search-button-admin {
+    border: none;
+    background: none;
+    border-radius: 50%;
+}
+
+#doctors_speciality {
+    height: 40px;
+    margin-bottom: 20px;
 }
 
 /* MODAL IN ADMIN SESSION */
@@ -788,7 +815,14 @@ label {
 
 
 /* ADD-STAY */
-/* Ajoutez ce CSS dans votre fichier app.css ou un autre fichier de style */
+
+
+#stays_extendStay {
+    display: flex;
+    flex-direction: row;
+    gap:20px;
+}
+
 
 .main-add-stay {
     display: flex;
@@ -874,7 +908,7 @@ label {
 
 /* Style des groupes de formulaire */
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     color:#0083BD;
 
 }
@@ -985,8 +1019,12 @@ label {
 }
 
 /* Style des créneaux de disponibilité */
-.availability-container {
-    margin-top: 1.5rem;
+#availability-container {
+    margin-top: 0px;
+}
+
+#availability-container p{
+    margin-top: 0px;
 }
 
 .day-container {
@@ -1026,8 +1064,13 @@ label {
 .question-in-add-stay {
     font-weight: 600;
     font-size: 1.4rem;
+    margin-top: 1.4rem;
 }
 
+#leaving-date-group {
+    margin-top: 1.4rem;
+
+}
 
 /* HISTORY */
 
@@ -1122,4 +1165,248 @@ label {
 .question-in-add-stay,
 #leaving-date-group {
     display: none;
+}
+
+
+
+/*  VERSION TABLETTE  */
+
+@media (min-width: 768px) and (max-width: 1129px) {
+
+    .endedstay_title {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .card-subcontainer p {
+        font-size: 18px;
+    }
+    .card-container {
+        width: 40%;
+        gap:10px;
+
+    }
+
+    .cards-main-container-dashboard {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+    }
+
+    .nav-dashboard a {
+        font-size: 22px;
+    }
+
+    .table-history{
+        font-size: 16px;
+    }
+    .date-align {
+        flex-direction: column;
+        gap:4px;
+    }
+    .main-add-stay {
+        padding-inline:0px;
+    }
+
+    .signup-confirmation-message-container {
+        margin-top: 50px;
+        margin-inline: 40px;
+    }
+
+    .signup-confirmation-message, .confirmation-message {
+        text-align: center;
+        font-size: 28px;
+        padding: 10px;
+    }
+    .header-confirmation {
+        justify-content: flex-start;
+    }
+
+    .header-admin-subcontainer{
+        width: 100%;
+    }
+
+    .header-dashboard-admin {
+        flex-direction: column;
+    }
+    .title-admin-dashboard {
+        font-size: 28px;
+    }
+    #admin-select-doctor {
+        width: 60%;
+        font-size: 20px;
+    }
+    .find-doctor {
+        font-size: 20px;
+
+    }
+}
+
+
+/*  VERSION MOBILE  */
+
+@media (max-width: 767px) {
+    .header-confirmation {
+        justify-content: flex-start;
+    }
+
+    .signup-title {
+        font-size: 20px;
+    }
+
+    .signup-confirmation-message-container, .confirmation-message {
+        margin-top: 40px;
+        margin-inline: 10px;
+    }
+
+    .signup-confirmation-message, .confirmation-message {
+        text-align: center;
+        font-size: 18px;
+        padding: 4px;
+    }
+    .endedstay_title {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+    }
+
+    .return-btn {
+        font-size: 0.8rem;
+    }
+
+    .card-subcontainer p {
+        font-size: 14px;
+    }
+    .card-container {
+        gap:6px;
+
+    }
+
+    .cards-main-container-dashboard {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+
+    }
+
+    .main-add-stay {
+        padding-inline:0px;
+    }
+
+    .nav-dashboard a {
+        font-size: 18px;
+        padding:4px;
+    }
+
+    .table-history{
+        font-size: 10px;
+    }
+
+    .rdv-all-cards {
+        padding-inline: 4px;
+    }
+    .date-align {
+        flex-direction: column;
+        gap:4px;
+    }
+    .endedstay_title {
+        font-size: 14px;
+    }
+
+
+    .lign-table td {
+        padding : 4px;
+    }
+
+    .pagination-container {
+        margin:0px;
+    }
+    .history-title {
+        margin-block:16px;
+    }
+    .title-in-add-stay {
+        font-size: 20px;
+        text-align: center;
+    }
+    .entrydate-input {
+        width: 80%;
+    }
+
+    .header-admin-subcontainer{
+        width: 100%;
+    }
+
+    .header-dashboard-admin {
+        flex-direction: column;
+    }
+    .title-admin-dashboard {
+        font-size: 28px;
+    }
+    #admin-select-doctor {
+        width: 70%;
+        font-size: 14px;
+    }
+    .find-doctor {
+        font-size: 14px;
+        width: 60%;
+
+    }
+    .fa-magnifying-glass, .fa-calendar-days {
+        font-size: 24px;
+        padding:18px;
+    }
+    .nav-in-admin {
+        padding-bottom: 10px;
+    }
+}
+
+@media (max-width: 525px) {
+    .header-dashboard {
+        justify-content: space-around;
+    }
+
+    .nav-dashboard {
+        gap:10px;
+    }
+
+    .nav-dashboard a {
+        font-size: 14px;
+        padding:4px;
+    }
+
+    .title-in-add-stay {
+        font-size: 16px;
+    }
+
+    #stays_entrydate {
+        font-size: 12px;
+
+    }
+    label {
+        font-size: 18px;
+    }
+    .container-for-form {
+        padding:8px;
+    }
+    .admin-main-title {
+        font-size: 18px;
+    }
+    .main-admin-dashboard {
+        margin-inline:14px;
+        margin-block:80px;
+    }
+    .title-admin-dashboard {
+        font-size: 20px;
+    }
+    #admin-select-doctor, .find-doctor {
+        padding: 15px;
+    }
+    .fa-magnifying-glass, .fa-calendar-days {
+        font-size: 20px;
+        padding:15px;
+    }
 }

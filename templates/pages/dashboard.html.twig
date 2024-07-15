@@ -25,25 +25,27 @@
     <div class="endedstay_title_container in-progress-container">
         <p class="endedstay_title">RENDEZ-VOUS EN COURS</p>
     </div>
+    <div class="cards-main-container-dashboard">
+        {% for stay in currentStays %}
+            <div class="card-container in-progress-card">
+                <div class="card-subcontainer">
+                    <p class="date-in-card">Entrée : {{ stay.entrydate|date('H\\hi') }}  ({{ stay.entrydate|date('d/m/Y') }})</p>
+                    {% if stay.entrydate == stay.leavingdate %}
+                        <p class="date-in-card">Sortie : {{ stay.leavingdate|date('d/m/Y') }}</p>
+                    {% else %}
+                        <p class="date-in-card">Sortie : {{ stay.leavingdate|date('H\\hi') }}  ({{ stay.leavingdate|date('d/m/Y') }})</p>
+                    {% endif %}
+                </div>
+                <div class="card-subcontainer">
+                    <p class="date-in-card">{{ stay.reason }}</p>
+                    <p class="doctor-in-card">Docteur {{ stay.doctor.lastname }}, {{ stay.doctor.speciality }}</p>
+                </div>
+            </div>
+        {% else %}
+            <p>Aucun rendez-vous en cours.</p>
+        {% endfor %}
+    </div>
 
-    {% for stay in currentStays %}
-        <div class="card-container in-progress-card">
-            <div class="card-subcontainer">
-                <p class="date-in-card">Entrée : {{ stay.entrydate|date('H\\hi') }}  ({{ stay.entrydate|date('d/m/Y') }})</p>
-                {% if stay.entrydate == stay.leavingdate %}
-                    <p class="date-in-card">Sortie : {{ stay.leavingdate|date('d/m/Y') }}</p>
-                {% else %}
-                    <p class="date-in-card">Sortie : {{ stay.leavingdate|date('H\\hi') }}  ({{ stay.leavingdate|date('d/m/Y') }})</p>
-                {% endif %}
-            </div>
-            <div class="card-subcontainer">
-                <p class="date-in-card">{{ stay.reason }}</p>
-                <p class="doctor-in-card">Docteur {{ stay.doctor.lastname }}, {{ stay.doctor.speciality }}</p>
-            </div>
-        </div>
-    {% else %}
-        <p>Aucun rendez-vous en cours.</p>
-    {% endfor %}
 
 </section>
 
@@ -51,7 +53,7 @@
     <div class="endedstay_title_container futur-stay-container">
         <p class="endedstay_title">RENDEZ-VOUS À VENIR</p>
     </div>
-
+    <div class="cards-main-container-dashboard">
     {% for stay in upcomingStays %}
         <div class="card-container futur-stay-card">
             <div class="card-subcontainer">
@@ -70,6 +72,7 @@
     {% else %}
         <p>Aucun rendez-vous à venir.</p>
     {% endfor %}
+    </div>
 </section>
 
 </body>

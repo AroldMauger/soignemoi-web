@@ -9,55 +9,49 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;700&family=Noto+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/70fabb1b7e.js" crossorigin="anonymous"></script>
-
 </head>
-<body class="body-dashboard body-add-stay">
-    <header class="header-dashboard">
-        <img class="logo-dashboard" src="logo-soignemoi.png" alt="logo de l'hôpital Soignemoi">
-        <nav class="nav-dashboard">
-            <a href="/add-stay">Séjour</a>
-            <a href="/dashboard">Tableau de bord</a>
-            <a href="/logout">Déconnexion</a>
-        </nav>
-    </header>
-    <main class="main-dashboard">
-        <section class="endedstay_title">
-            <div class="endedstay_title_container futur-stay-container">
-                <p class="endedstay_title">HISTORIQUE DES RENDEZ-VOUS</p>
-            </div>
-
-            <section class="rdv-all-cards">
-                <div class="pagination-container">
-
+<body class="body-dashboard">
+<header class="header-dashboard header-dashboard-history">
+    <img class="logo-dashboard" src="logo-soignemoi.png" alt="logo de l'hôpital Soignemoi">
+    <nav class="nav-dashboard">
+        <a href="/add-stay">Séjour</a>
+        <a href="/dashboard">Tableau de bord</a>
+        <a href="/logout">Déconnexion</a>
+    </nav>
+</header>
+<main class="main-dashboard">
+    <section class="endedstay_title">
+        <div class="endedstay_title_container futur-stay-container history-title">
+            <p class="endedstay_title">HISTORIQUE DES RENDEZ-VOUS</p>
+        </div>
+        <section class="rdv-all-cards">
+            <div class="pagination-container">
+                {% if totalPages > 1 %}  <!-- Vérifiez si la pagination est nécessaire -->
                     {% if previousPage is not null %}
                         <a href="{{ url("history", {"page" : firstPage}) }}">
                             <i class="fa-solid fa-chevron-left"></i>
                         </a>
-
                         <a href="{{ url("history", {"page" : previousPage}) }}"> {{ previousPage }}</a>
                     {% endif %}
-                    <span class="current-page-link" > {{ page }}</span>
-
+                    <span class="current-page-link">{{ page }}</span>
                     {% if nextPage is not null %}
-
                         <a href="{{ url("history", {"page" : nextPage}) }}"> {{ nextPage }}</a>
-
                         <a href="{{ url("history", {"page" : lastPage}) }}">
                             <i class="fa-solid fa-chevron-right"></i>
                         </a>
                     {% endif %}
-
-                </div>
-                <table class="table-history">
-                    <thead>
-                    <tr class="header-table-items">
-                        <th class="orange-bg">DATE DU SÉJOUR</th>
-                        <th class="orange-bg">MOTIF DU RDV</th>
-                        <th class="orange-bg">MÉDECIN</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for stay in stays %}
+                {% endif %}
+            </div>
+            <table class="table-history">
+                <thead>
+                <tr class="header-table-items">
+                    <th class="orange-bg">DATE DU SÉJOUR</th>
+                    <th class="orange-bg">MOTIF DU RDV</th>
+                    <th class="orange-bg">MÉDECIN</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for stay in stays %}
                     <tr class="lign-table">
                         <td class="date-align">
                             <span>Du {{ stay.entrydate|date('d/m/Y') }}</span>
@@ -69,12 +63,11 @@
                             <span>{{ stay.doctor.speciality }}</span>
                         </td>
                     </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </section>
+                {% endfor %}
+                </tbody>
+            </table>
         </section>
-    </main>
-
+    </section>
+</main>
 </body>
 </html>

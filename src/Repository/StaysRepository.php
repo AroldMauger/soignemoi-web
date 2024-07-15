@@ -4,6 +4,7 @@
 namespace App\Repository;
 
 use App\Entity\Stays;
+use App\Entity\Users;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use DateTime;
@@ -16,7 +17,7 @@ class StaysRepository extends ServiceEntityRepository
     }
 
     // Méthode pour récupérer les séjours en cours
-    public function findCurrentStays(): array
+    public function findCurrentStays(Users $user): array
     {
         $now = new DateTime();
         return $this->createQueryBuilder('s')
@@ -25,11 +26,16 @@ class StaysRepository extends ServiceEntityRepository
             ->where('s.entrydate <= :now')
             ->andWhere('s.leavingdate >= :now')
             ->andWhere('sl.isbooked = true') // Condition pour vérifier si le slot est booké
+            ->andWhere('s.user = :user')
+            ->andWhere('s.status != :statusTermine') // Condition pour exclure les séjours "terminé"
             ->setParameter('now', $now)
+            ->setParameter('user', $user)
+            ->setParameter('statusTermine', 'terminé')
             ->orderBy('s.entrydate', 'ASC')
             ->getQuery()
             ->getResult();
     }
+
 
 
     public function findByDoctorLastName(string $lastName): array
@@ -53,7 +59,7 @@ class StaysRepository extends ServiceEntityRepository
     }
 
     // Méthode pour récupérer les séjours à venir
-    public function findUpcomingStays(): array
+    public function findUpcomingStays(Users $user): array
     {
         $now = new DateTime();
         return $this->createQueryBuilder('s')
@@ -61,12 +67,41 @@ class StaysRepository extends ServiceEntityRepository
             ->addSelect('sl')
             ->where('s.entrydate > :now')
             ->andWhere('sl.isbooked = true') // Condition pour vérifier si le slot est booké
+            ->andWhere('s.user = :user')
+            ->andWhere('s.status != :statusTermine') // Condition pour exclure les séjours "terminé"
             ->setParameter('now', $now)
+            ->setParameter('user', $user)
+            ->setParameter('statusTermine', 'terminé')
             ->orderBy('s.entrydate', 'ASC')
             ->getQuery()
             ->getResult();
     }
 
+    public function findNonTerminatedStays(): array
+    {
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.slot', 'sl') // Jointure avec l'entité Slot
+            ->addSelect('sl')
+            ->where('s.status != :statusTermine')
+            ->andWhere('sl.isbooked = true') // Condition pour vérifier si le slot est booké
+            ->setParameter('statusTermine', 'terminé')
+            ->getQuery()
+            ->getResult();
+    }
+    public function findNonTerminatedStaysByDoctorLastName(string $lastName): array
+    {
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.doctor', 'd')
+            ->leftJoin('s.slot', 'sl') // Jointure avec l'entité Slot
+            ->addSelect('d', 'sl')
+            ->where('d.lastname = :lastname')
+            ->andWhere('s.status != :statusTermine')
+            ->andWhere('sl.isbooked = true') // Condition pour vérifier si le slot est booké
+            ->setParameter('lastname', $lastName)
+            ->setParameter('statusTermine', 'terminé')
+            ->getQuery()
+            ->getResult();
+    }
     // Méthode pour mettre à jour le statut des séjours
     public function updateStayStatuses(): void
     {
@@ -101,14 +136,16 @@ class StaysRepository extends ServiceEntityRepository
             ->execute();
     }
 
-    public function findFinishedPaginated(int $page, int $limit): array
+    public function findFinishedPaginated(Users $user, int $page, int $limit): array
     {
         return $this->createQueryBuilder('a')
             ->leftJoin('a.slot', 'sl') // Jointure avec l'entité Slot
             ->addSelect('sl')
             ->where('a.status = :status')
             ->andWhere('sl.isbooked = true') // Condition pour vérifier si le slot est booké
+            ->andWhere('a.user = :user')
             ->setParameter('status', 'terminé')
+            ->setParameter('user', $user)
             ->setFirstResult($page * $limit)
             ->setMaxResults($limit)
             ->getQuery()

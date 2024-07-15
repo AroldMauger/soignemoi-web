@@ -2,14 +2,14 @@
 
 namespace App\Controller\Api;
 
-use App\Context\DoctorApiContext;
 use App\Entity\Stays;
 use App\Repository\StaysRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
 #[Route("/api/stays", name: 'api_stays')]
 class StaysApiController extends AbstractController
@@ -22,8 +22,8 @@ class StaysApiController extends AbstractController
         $doctorLastName = $request->query->get('doctorLastName');
 
         $stays = $doctorLastName
-            ? $staysRepository->findByDoctorLastName($doctorLastName)
-            : $staysRepository->findAll();
+            ? $staysRepository->findNonTerminatedStaysByDoctorLastName($doctorLastName)
+            : $staysRepository->findNonTerminatedStays();
 
         // Convert entities to arrays
         $staysArray = array_map([$this, 'transformStayToArray'], $stays);
@@ -83,5 +83,22 @@ class StaysApiController extends AbstractController
                 ];
             })->toArray()
         ];
+    }
+
+    #[Route('/{id}/finish', methods: ['PATCH'])]
+    public function finishStay(
+        #[MapEntity] Stays $stay,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        $stay->setStatus('terminé');
+        $entityManager->persist($stay);
+        $entityManager->flush();
+
+        return new JsonResponse(['status' => 'success'], JsonResponse::HTTP_OK);
+    }
+
+    #[Route('/{id}/finish', methods: ['OPTIONS'])]
+    public function options(): JsonResponse {
+        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
 }

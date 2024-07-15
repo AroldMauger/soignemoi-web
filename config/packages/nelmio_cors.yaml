@@ -4,11 +4,11 @@ nelmio_cors:
         allow_origin: ['http://localhost:5173']
         allow_headers: ['content-type', 'authorization']
         expose_headers: []
-        allow_methods: ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE']
+        allow_methods: ['POST', 'GET', 'OPTIONS', 'PUT', 'PATCH', 'DELETE']
         max_age: 3600
     paths:
         '^/api/':
             allow_origin: ['http://localhost:5173']
             allow_headers: ['content-type', 'authorization']
-            allow_methods: ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE']
+            allow_methods: ['POST', 'GET', 'OPTIONS', 'PUT', 'PATCH', 'DELETE']
             max_age: 3600

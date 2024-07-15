@@ -17,7 +17,7 @@
         <h1 class="admin-main-title">Session administrateur</h1>
     </div>
 
-    <nav class="nav-dashboard">
+    <nav class="nav-dashboard nav-in-admin">
         <a href="{{ path('doctor_new') }}">Ajouter un médecin</a>
         <a href="/logout">Déconnexion</a>
     </nav>
@@ -34,7 +34,7 @@
                 </option>
             {% endfor %}
         </select>
-        <button type="submit" class="search-button">
+        <button type="submit" class="search-button-admin">
             <i class="fa-solid fa-magnifying-glass"></i>
         </button>
     </form>
