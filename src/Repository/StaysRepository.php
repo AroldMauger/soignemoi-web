@@ -19,22 +19,24 @@ class StaysRepository extends ServiceEntityRepository
     // Méthode pour récupérer les séjours en cours
     public function findCurrentStays(Users $user): array
     {
-        $now = new DateTime();
+        $now = new DateTime();  // Utilisation de DateTime() pour obtenir l'heure actuelle
         return $this->createQueryBuilder('s')
-            ->leftJoin('s.slot', 'sl') // Jointure avec l'entité Slot
+            ->leftJoin('s.slot', 'sl')  // Jointure avec l'entité Slot
             ->addSelect('sl')
-            ->where('s.entrydate <= :now')
-            ->andWhere('s.leavingdate >= :now')
-            ->andWhere('sl.isbooked = true') // Condition pour vérifier si le slot est booké
-            ->andWhere('s.user = :user')
-            ->andWhere('s.status != :statusTermine') // Condition pour exclure les séjours "terminé"
+            ->where('s.entrydate <= :now')  // Date d'entrée doit être avant ou égale à maintenant
+            ->andWhere('s.leavingdate >= :now')  // Date de départ doit être après ou égale à maintenant
+            ->andWhere('sl.isbooked = true')  // Le slot doit être réservé
+            ->andWhere('s.user = :user')  // Le séjour doit appartenir à l'utilisateur
+            ->andWhere('s.status = :statusEnCours')  // Le statut du séjour doit être "en cours"
             ->setParameter('now', $now)
             ->setParameter('user', $user)
-            ->setParameter('statusTermine', 'terminé')
-            ->orderBy('s.entrydate', 'ASC')
+            ->setParameter('statusEnCours', 'en cours')  // Définir le paramètre du statut à "en cours"
+            ->orderBy('s.entrydate', 'ASC')  // Tri des séjours par date d'entrée
             ->getQuery()
             ->getResult();
     }
+
+
 
 
 
@@ -68,14 +70,15 @@ class StaysRepository extends ServiceEntityRepository
             ->where('s.entrydate > :now')
             ->andWhere('sl.isbooked = true') // Condition pour vérifier si le slot est booké
             ->andWhere('s.user = :user')
-            ->andWhere('s.status != :statusTermine') // Condition pour exclure les séjours "terminé"
+            ->andWhere('s.status = :statusAvenir') // Condition pour inclure les séjours "à venir"
             ->setParameter('now', $now)
             ->setParameter('user', $user)
-            ->setParameter('statusTermine', 'terminé')
+            ->setParameter('statusAvenir', 'à venir') // Assurez-vous que le statut correspond à "à venir"
             ->orderBy('s.entrydate', 'ASC')
             ->getQuery()
             ->getResult();
     }
+
 
     public function findNonTerminatedStays(): array
     {
@@ -107,6 +110,7 @@ class StaysRepository extends ServiceEntityRepository
     {
         $now = new DateTime();
 
+        // Met à jour le statut des séjours en cours
         $this->createQueryBuilder('s')
             ->update()
             ->set('s.status', ':status')
@@ -117,6 +121,7 @@ class StaysRepository extends ServiceEntityRepository
             ->getQuery()
             ->execute();
 
+        // Met à jour le statut des séjours à venir
         $this->createQueryBuilder('s')
             ->update()
             ->set('s.status', ':status')
@@ -126,6 +131,7 @@ class StaysRepository extends ServiceEntityRepository
             ->getQuery()
             ->execute();
 
+        // Met à jour le statut des séjours terminés
         $this->createQueryBuilder('s')
             ->update()
             ->set('s.status', ':status')
@@ -135,6 +141,7 @@ class StaysRepository extends ServiceEntityRepository
             ->getQuery()
             ->execute();
     }
+
 
     public function findFinishedPaginated(Users $user, int $page, int $limit): array
     {

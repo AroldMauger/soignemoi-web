@@ -40,12 +40,35 @@ document.addEventListener('DOMContentLoaded', () => {
     entryDateElement.setAttribute('min', today);
     leavingDateElement.setAttribute('min', today);
 
-    const validateDate = (dateInput, minDate, errorMessage) => {
-        if (new Date(dateInput.value) < new Date(minDate)) {
-            alert(errorMessage);
-            dateInput.value = minDate;
+    // Fonction pour vérifier que la date et l'heure choisies ne sont pas dans le passé
+    const validateDate = (dateTimeInput) => {
+        const now = new Date();
+        const chosenDateTime = new Date(dateTimeInput.value);
+
+        if (chosenDateTime < now) {
+            alert("La date et l'heure ne peuvent pas être antérieures à la date et l'heure actuelles.");
+            dateTimeInput.value = '';  // Réinitialiser le champ de date et d'heure
         }
     };
+    const validateEntryTime = () => {
+        const selectedSlot = slotSelect.selectedOptions[0];
+        if (!selectedSlot) return;
+
+        const startTime = selectedSlot.getAttribute('data-starttime');
+        const entryTime = entryDateElement.value;
+
+        if (!entryTime || !startTime) return;
+
+        const entryDateTime = new Date(entryTime);
+        const [startHour, startMinute] = startTime.split(':').map(Number);
+        const slotStartDateTime = new Date(entryDateTime.getFullYear(), entryDateTime.getMonth(), entryDateTime.getDate(), startHour, startMinute);
+
+        if (entryDateTime > slotStartDateTime) {
+            alert("Heure d'entrée du séjour et heure du rendez-vous incompatibles, veuillez sélectionner une autre heure en début de formulaire.");
+            entryDateElement.value = '';  // Réinitialiser le champ de date et d'heure
+        }
+    };
+
 
     // Fonction pour afficher le champ de spécialité si une date d'entrée est définie
     const showSpeciality = () => {
@@ -93,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 slotSelect.innerHTML = '<option value="">Choisissez un créneau</option>';
                 if (data.slots && data.slots.length > 0) {
                     data.slots.forEach(slot => {
-                        slotSelect.innerHTML += `<option value="${slot.id}">${slot.starttime} - ${slot.endtime}</option>`;
+                        slotSelect.innerHTML += `<option value="${slot.id}" data-starttime="${slot.starttime}">${slot.starttime} - ${slot.endtime}</option>`;
                     });
                 } else {
                     slotSelect.innerHTML = '<option value="">Aucun créneau disponible</option>';
@@ -145,6 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
     slotSelect.addEventListener('change', () => {
         // Affiche ou cache le conteneur de la question en fonction du créneau
         questionContainer.style.display = slotSelect.value ? 'block' : 'none';
+        validateEntryTime()
     });
 
     searchButton.addEventListener('click', showSpeciality);

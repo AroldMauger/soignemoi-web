@@ -95,6 +95,7 @@ class StaysController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $slot = $data->getSlot();
+            $data->setStatus('en cours');
 
             if (!$slot) {
                 throw new \Exception('Le créneau sélectionné est invalide.');

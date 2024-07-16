@@ -70,7 +70,7 @@ class StaysType extends AbstractType
                 'placeholder' => 'Choisissez un créneau',  // Placeholder pour le champ vide par défaut
             ])
             ->add('status', HiddenType::class, [
-                'data' => 'en cours',
+                'data' => 'à venir',
             ])
             ->add('user', HiddenType::class, [
                 'data' => $options['user']->getId(),

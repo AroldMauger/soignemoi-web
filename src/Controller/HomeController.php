@@ -17,10 +17,13 @@ class HomeController extends AbstractController {
         $this->denyAccessUnlessGranted('ROLE_USER');
         $user = $this->getUser(); // Récupérer l'utilisateur connecté
 
-        $staysRepository->updateStayStatuses();
 
         $currentStays = $staysRepository->findCurrentStays($user);
         $upcomingStays = $staysRepository->findUpcomingStays($user);
+        $staysRepository->updateStayStatuses();
+        $now = new \DateTime();
+        echo $now->format('Y-m-d H:i:s');
+
 
         return $this->render('pages/dashboard.html.twig', [
             'currentStays' => $currentStays,
