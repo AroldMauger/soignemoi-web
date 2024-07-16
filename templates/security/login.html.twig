@@ -5,9 +5,15 @@
 {% block body %}
     <header class="header_in_mainpage">
         <img class="logo_main" src="logo-soignemoi.png" alt="logo de l'hôpital SoigneMoi">
-        <a href="/signup">
-            <button class="signup_button">Créer un compte</button>
-        </a>
+        <div class="header-sub">
+            <button class="login_button-in-header" type="submit" id="login_button_desktop_header">
+                Se connecter
+            </button>
+            <a href="/signup">
+                <button class="signup_button">Créer un compte</button>
+            </a>
+        </div>
+
     </header>
 
     <main class="main_in_mainpage signup-main">
@@ -21,7 +27,7 @@
                     <li>plus de 6000 patients satisfaits</li>
                 </ul>
                 <div class="login_button_container">
-                    <button id="login_button_desktop" class="login_button">SE CONNECTER</button>
+                    <button id="login_button_desktop" class="login_button login-button-in-desktop">SE CONNECTER</button>
                 </div>
                 {% if error %}
                     <script>
@@ -32,25 +38,23 @@
                 {% endif %}
             </div>
 
-            <div class="image_presentation content_in_mainpage">
-                <div class="container_above_image">
-                    <div class="new">
-                        <i class="fa-solid fa-star"></i>
-                        <span>NOUVEAU</span>
-                        <i class="fa-solid fa-star"></i>
+            <div class="image_presentation content_in_mainpage-for-image">
+                <div class="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img src="doctor-1.png" alt="Présentation des services de l'hôpital">
+                        </div>
+                        <div class="carousel-item">
+                            <img src="doctor-2.png" alt="Présentation des services de l'hôpital">
+                        </div>
+                        <div class="carousel-item">
+                            <img src="doctor-3.png" alt="Présentation des services de l'hôpital">
+                        </div>
                     </div>
-                    <div class="text_above_image">
-                        <p>Ouverture janvier 2024 :</p>
-                        <ul>
-                            <li>Cabinet dentaire</li>
-                            <li>Cabinet de pédiatrie</li>
-                        </ul>
-                        <p>Prise de rendez-vous <br>immédiate.</p>
-                    </div>
+                    <a class="carousel-control-next" onclick="nextSlide()">&#10095;</a>
                 </div>
-
-                <img class="image_in_mainpage" src="doctor.jpg" alt="photo d'un docteur en tenue de travail">
             </div>
+
         </section>
     </main>
 

@@ -24,7 +24,7 @@ body {
     width: 8%;
 }
 
-.signup_button {
+.signup_button, .login_button-in-header {
     border: 1px solid #000;
     background: #FFA95C;
     padding:22px 18px 22px 18px;
@@ -33,6 +33,16 @@ body {
     font-size: 20px;
     cursor: pointer;
     color:#3E4A3D;
+}
+
+.login_button-in-header {
+    display: none;
+}
+
+.header-sub {
+    display: flex;
+    flex-direction: row;
+    gap:50px;
 }
 
 .login_button_container {
@@ -67,6 +77,10 @@ body {
 .content_in_mainpage {
     width: 48%;
 }
+
+.content_in_mainpage-for-image {
+    width: 48%;
+}
 .image_in_mainpage {
     width: 100%;
     position: relative;
@@ -78,7 +92,7 @@ body {
     color: #B0F5F9;
     text-align: justify;
     font-family: Noto Sans;
-    font-size: 34px;
+    font-size: 30px;
     font-style: normal;
     font-weight: 700;
     letter-spacing: 3.2px;
@@ -89,7 +103,7 @@ body {
     color: #B0F5F9;
     text-align: justify;
     font-family: Noto Sans;
-    font-size: 32px;
+    font-size: 28px;
     font-style: normal;
     font-weight: 700;
     line-height: 53px;
@@ -107,7 +121,6 @@ body {
 .text_above_image {
     color: #B0F5F9;
     font-family: Noto Sans;
-    font-size: 22px;
     font-style: normal;
     font-weight: 700;
 }
@@ -124,14 +137,53 @@ body {
     margin: 20px;
 }
 .new {
-    color: #F3F9B0;
-
+    color:#076F88;
     font-family: Noto Sans;
     font-size: 32px;
     font-style: normal;
     font-weight: 700;
     line-height: 53px;
     letter-spacing: 2.56px;
+}
+.text_above_image span {
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    color: #076F88;
+    position: relative;
+    padding-left: 25px;
+}
+
+.text_above_image {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.speciality-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.speciality-item {
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    color: #555;
+    position: relative;
+    padding-left: 25px;
+}
+
+.speciality-item::before {
+    content: '\2713';
+    color: #4CAF50;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.speciality-item {
+    color:#076F88;
 }
 
 .footer_in_mainpage {
@@ -148,6 +200,73 @@ body {
 .footer_in_mainpage p {
     font-size: 20px;
     color:white;
+}
+.speciality-item {
+    font-size: 16px;
+}
+
+
+/* CARROUSEL IN LOGIN PAGE*/
+
+.image_presentation {
+    position: relative;
+    max-width: 100%;
+    margin: auto;
+    overflow: hidden;
+}
+
+.carousel {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.carousel-inner {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.carousel-item {
+    min-width: 100%;
+    transition: opacity 0.5s ease-in-out;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.carousel-item.active {
+    opacity: 1;
+    position: relative;
+}
+
+.carousel-item img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.carousel-control-next {
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 16px;
+    color: white;
+    font-weight: bold;
+    font-size: 24px;
+    cursor: pointer;
+    user-select: none;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+
+.carousel-control-next:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0.8;
+}
+
+.carousel-control-next {
+    right: 10px;
 }
 
 
@@ -1409,4 +1528,54 @@ label {
         font-size: 20px;
         padding:15px;
     }
+}
+
+
+@media (max-width: 1240px) {
+
+    .presentation_in_main_page {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+
+
+    .content_in_mainpage {
+        width: 80%;
+        padding-inline: 80px;
+        padding-top:50px;
+    }
+
+    .content_in_mainpage-for-image {
+        width: 100%;
+        padding-inline: 20px;
+        padding-top:50px;
+        margin:20px;
+
+    }
+
+    .welcome_text {
+        margin-bottom: 2px;
+    }
+    .details_text {
+        font-size: 24px;
+        line-height: 38px;
+    }
+    .login-button-container {
+        display: none;
+    }
+
+    .login-button-in-desktop {
+        display: none;
+    }
+    .login_button-in-header {
+        display: block;
+    }
+
+    .image_presentation {
+        width: 80%;
+        margin:20px;
+    }
+
 }
