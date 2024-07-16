@@ -21,8 +21,6 @@ class HomeController extends AbstractController {
         $currentStays = $staysRepository->findCurrentStays($user);
         $upcomingStays = $staysRepository->findUpcomingStays($user);
         $staysRepository->updateStayStatuses();
-        $now = new \DateTime();
-        echo $now->format('Y-m-d H:i:s');
 
 
         return $this->render('pages/dashboard.html.twig', [
