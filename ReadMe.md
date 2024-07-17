@@ -4,6 +4,8 @@ Cette application permet aux patients de l'hôpital de créer un compte pour ens
 
 Une session administrateur permet d'ajouter des médecins et de gérer leurs emplois du temps en ajoutant des créneaux de consultation.
 
+Le site est accessible et hébergé sur AlwaysData à cette adresse :  https://soignemoi.alwaysdata.net/
+
 ## Technologies utilisées
 
 Le projet a été réalisé avec les technologies suivantes :
