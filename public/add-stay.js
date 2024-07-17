@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM entièrement chargé et analysé');
 
     // --- Déclaration des éléments DOM ---
     const entryDateElement = document.querySelector('#stays_entrydate');
@@ -18,13 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const slotContainer = document.querySelector("#availability-container");
     const questionContainer = document.querySelector('.question-in-add-stay');
 
-    // Vérifications initiales des éléments DOM
-    if (!entryDateElement || !slotSelect || !searchButton || !specialityElement || !reasonElement || !doctorElement || !leavingDateElement) {
-        console.error('Un ou plusieurs éléments nécessaires sont manquants dans le DOM.');
-        return;
-    }
 
-    console.log('Elements trouvés:', { entryDateElement, slotSelect, specialityElement, reasonElement, doctorElement, searchButton, leavingDateElement, extendYes, extendNo, leavingDateGroup, specialityContainer, reasonContainer, doctorContainer, slotContainer, questionContainer });
+
 
     // --- Fonctions Utilitaires ---
     const getTodayDate = () => {
@@ -92,9 +86,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateSlots = () => {
         const doctorId = doctorElement.value;
         const date = entryDateElement.value ? new Date(entryDateElement.value).toISOString().split('T')[0] : '';
+        const specialty = specialityElement.value;  // Assuming there is an element for specialty selection
 
-        if (!doctorId || !date) {
-            console.error('Doctor ID ou Date est manquant.');
+        // Check if both date and specialty are selected
+        if (!date || !specialty) {
+            console.log('Veuillez sélectionner une date et une spécialité.');
             return;
         }
 
@@ -107,12 +103,12 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             body: new URLSearchParams({
                 doctor_id: doctorId,
-                date: date
+                date: date,
+                specialty: specialty  // Include specialty in the request body
             })
         })
             .then(response => response.json())
             .then(data => {
-                console.log('Disponibilités reçues:', data);
                 slotSelect.innerHTML = '<option value="">Choisissez un créneau</option>';
                 if (data.slots && data.slots.length > 0) {
                     data.slots.forEach(slot => {
@@ -186,7 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch(`/stay-search?speciality=${specialityId}`)
             .then(response => response.json())
             .then(data => {
-                console.log('Données reçues pour la spécialité:', data);
                 const doctorSelect = document.querySelector('.doctor-selector');
                 doctorSelect.innerHTML = '<option value="">Choisissez un médecin</option>';
                 data.doctors.forEach(doctor => {

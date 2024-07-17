@@ -65,7 +65,8 @@ class StaysType extends AbstractType
                 'choice_value' => 'id',
                 'expanded' => false,
                 'multiple' => false,
-                'required' => true,
+                'required' => false,
+                'label' => 'Créneaux disponibles',
                 'attr' => ['class' => 'slot-selector'],
                 'placeholder' => 'Choisissez un créneau',  // Placeholder pour le champ vide par défaut
             ])
